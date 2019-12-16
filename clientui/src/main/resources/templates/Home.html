@@ -2,21 +2,23 @@
     <html xmlns:th="http://www.thymeleaf.org">
         <head>
             <title>Mcommerce</title>
-            <link rel="stylesheet" type="text/css" href="webjars/bootstrap/4.0.0-2/css/bootstrap.min.css" />
+            <div th:replace="Header :: header"></div>
         </head>
         <body>
+            <div th:replace="Navbar :: navbar"></div>
             <div class="container">
-                <h1 class="text-center">Système d'information de la bibliothèque</h1>
+                <h1 class="text-center">Les ouvrages disponibles</h1>
                 <div class="row">
-                    <div th:each="book : ${books}" class="col-md-4 my-1">
-                        <div class="column-table-link">
+                    <div th:each="book : ${books}" class="col-lg-4 my-1">
+                        <div class="column-table-link mb-5">
                             <table class="list-sites table">
                                 <tr>
                                     <th scope="col">
                                         Titre
                                     </th>
-                                    <td scope="col" th:text="${book.title}"></td>
+                                    <td scope="col" class="book-title" th:text="${book.title}"></td>
                                 </tr>
+                                <tr>
                                 <tr>
                                     <th scope="col">
                                         Auteur
@@ -48,7 +50,9 @@
                                     <td scope="col" th:text="${book.publisher}"></td>
                                 </tr>
                             </table>
-                            <p><a th:href="@{|/details-book/${book.id}|}">En savoir plus</a></p>
+                            <p class="text-center"><a th:href="@{|/details-book/${book.id}|}">En savoir plus</a><br />
+                                <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" />
+                            </p>
                         </div>
                     </div>
                 </div>

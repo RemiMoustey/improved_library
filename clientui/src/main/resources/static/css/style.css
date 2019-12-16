@@ -1,0 +1,20 @@
+.container {
+    margin-top: 101px;
+}
+
+.column-table-link {
+    border: 2px solid #000;
+}
+
+.book-title {
+    font-style: italic;
+}
+
+.img-card-book {
+    width: 220px;
+}
+
+.input-required {
+    color: red;
+    font-weight: bold;
+}

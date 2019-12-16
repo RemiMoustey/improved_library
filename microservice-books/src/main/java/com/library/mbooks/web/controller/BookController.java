@@ -3,7 +3,7 @@ package com.library.mbooks.web.controller;
 import com.library.mbooks.configurations.ApplicationPropertiesConfiguration;
 import com.library.mbooks.dao.BookDao;
 import com.library.mbooks.model.Book;
-import com.library.mbooks.web.exceptions.*;
+import com.library.mbooks.web.exceptions.BookNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

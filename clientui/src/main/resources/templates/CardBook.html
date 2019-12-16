@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Mcommerce</title>
+        <div th:replace="Header :: header"></div>
+    </head>
+    <body>
+        <div th:replace="Navbar :: navbar"></div>
+        <div class="container">
+            <h1 class="text-center">Fiche du livre <span class="book-title" th:text="${book.title}"></span></h1>
+                <p class="img-card-book mx-auto mt-5"><img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" class="card-img-top"/></p>
+                <div class="mx-auto mt-5 text-center">
+                    <table class="list-sites table">
+                        <tr>
+                            <th scope="col">
+                                Titre
+                            </th>
+                            <td scope="col" class="book-title" th:text="${book.title}"></td>
+                        </tr>
+                        <tr>
+                            <th scope="col">
+                                Auteur
+                            </th>
+                            <td scope="col" th:text="${book.author}"></td>
+                        </tr>
+                        <tr>
+                            <th scope="col">
+                                Année de publication
+                            </th>
+                            <td scope="col" th:text="${book.publicationYear}"></td>
+                        </tr>
+                        <tr>
+                            <th scope="col">
+                                ISBN
+                            </th>
+                            <td scope="col" th:text="${book.isbn}"></td>
+                        </tr>
+                        <tr>
+                            <th scope="col">
+                                Nombre de pages
+                            </th>
+                            <td scope="col" th:text="${book.numberOfPages}"></td>
+                        </tr>
+                        <tr>
+                            <th scope="col">
+                                Éditeur
+                            </th>
+                            <td scope="col" th:text="${book.publisher}"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="http://localhost:8080/webjars/bootstrap/4.0.0-2/js/bootstrap.min.js"></script>
+    </body>
+</html>

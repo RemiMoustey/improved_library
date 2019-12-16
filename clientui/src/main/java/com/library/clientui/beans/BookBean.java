@@ -6,6 +6,8 @@ public class BookBean {
 
     private String title;
 
+    private String image;
+
     private String author;
 
     private int publicationYear;
@@ -34,6 +36,14 @@ public class BookBean {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getAuthor() {
@@ -78,9 +88,10 @@ public class BookBean {
 
     @Override
     public String toString() {
-        return "Book{" +
+        return "BookBean{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
+                ", image='" + image + '\'' +
                 ", author='" + author + '\'' +
                 ", publicationYear=" + publicationYear +
                 ", isbn='" + isbn + '\'' +

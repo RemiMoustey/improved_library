@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Mcommerce</title>
+        <div th:replace="Header :: header"></div>
+    </head>
+    <body>
+        <div th:replace="Navbar :: navbar"></div>
+        <div class="container">
+            <h1 class="text-center">S'enregistrer</h1>
+
+            <form method="post" action="/validation" class="w-50 m-auto">
+                <div class="form-group">
+                    <label for="login">Login<span class="input-required">*</span></label>
+                    <input type="text" name="login" id="login" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe<span class="input-required">*</span></label>
+                    <input type="password" name="password" id="password" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="email">Email<span class="input-required">*</span></label>
+                    <input type="email" name="email" id="email" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="address">Adresse<span class="input-required">*</span></label>
+                    <input type="text" name="address" id="address" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="postalCode">Code postal<span class="input-required">*</span></label>
+                    <input type="text" name="postalCode" id="postalCode" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="town">Ville<span class="input-required">*</span></label>
+                    <input type="text" name="town" id="town" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="number">Numéro de lecteur<span class="input-required">*</span></label>
+                    <input type="number" name="number" id="number" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber">Téléphone</label>
+                    <input type="tel" name="phoneNumber" id="phoneNumber" class="form-control" />
+                </div>
+                <button type="submit" class="mb-5" onclick='return confirm("Êtes-vous sûr de vouloir enregistrer votre inscription ?")'>Terminer l'inscription</button>
+            </form>
+        </div>
+        <script type="text/javascript" src="http://localhost:8080/webjars/bootstrap/4.0.0-2/js/bootstrap.min.js"></script>
+    </body>
+</html>

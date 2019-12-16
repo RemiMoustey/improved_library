@@ -13,6 +13,8 @@ public class Book {
 
     private String title;
 
+    private String image;
+
     private String author;
 
     private Integer publicationYear;
@@ -25,16 +27,6 @@ public class Book {
 
     public Book() {
 
-    }
-
-    public Book(int id, String title, String author, int publicationYear, String isbn, int numberOfPages, String publisher) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.publicationYear = publicationYear;
-        this.isbn = isbn;
-        this.numberOfPages = numberOfPages;
-        this.publisher = publisher;
     }
 
     public Integer getId() {
@@ -51,6 +43,14 @@ public class Book {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getAuthor() {
@@ -98,6 +98,7 @@ public class Book {
         return "Book{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
+                ", image='" + image + '\'' +
                 ", author='" + author + '\'' +
                 ", publicationYear=" + publicationYear +
                 ", isbn='" + isbn + '\'' +
