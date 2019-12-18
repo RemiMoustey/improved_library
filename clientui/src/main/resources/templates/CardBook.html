@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Mcommerce</title>
+        <title th:text="${book.title}"></title>
         <div th:replace="Header :: header"></div>
     </head>
     <body>
@@ -46,6 +46,13 @@
                                 Éditeur
                             </th>
                             <td scope="col" th:text="${book.publisher}"></td>
+                        </tr>
+                        <tr>
+                            <th scope="col">
+                                Nombre d'exemplaires restants
+                            </th>
+                            <span th:if="${book.copies == 0}"><td scope="col" th:text="${book.copies}" class="red"></td></span>
+                            <span th:if="${book.copies > 0}"><td scope="col" th:text="${book.copies}" class="green"></td></span>
                         </tr>
                     </table>
                 </div>

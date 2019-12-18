@@ -1,9 +1,17 @@
-.container {
-    margin-top: 101px;
+.green {
+    color: #609974;
 }
 
-.column-table-link {
-    border: 2px solid #000;
+.red {
+    color: #F00;
+}
+
+.green, .red {
+    font-weight: bold;
+}
+
+.container {
+    margin-top: 101px;
 }
 
 .book-title {
@@ -17,4 +25,21 @@
 .input-required {
     color: red;
     font-weight: bold;
+}
+
+.form-search {
+    margin: auto;
+}
+
+.search-radio {
+    width: 318px;
+}
+
+@media all and (max-width: 991px) {
+    .fixed-top {
+        position: static;
+    }
+    .container {
+        margin-top: 0px;
+    }
 }

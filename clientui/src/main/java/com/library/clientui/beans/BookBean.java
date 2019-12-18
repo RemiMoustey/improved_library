@@ -1,5 +1,7 @@
 package com.library.clientui.beans;
 
+import javax.persistence.Entity;
+
 public class BookBean {
 
     private int id;
@@ -17,6 +19,8 @@ public class BookBean {
     private int numberOfPages;
 
     private String publisher;
+
+    private int copies;
 
     public BookBean() {
 
@@ -84,6 +88,14 @@ public class BookBean {
 
     public void setPublisher(String publisher) {
         this.publisher = publisher;
+    }
+
+    public int getCopies() {
+        return copies;
+    }
+
+    public void setCopies(int copies) {
+        this.copies = copies;
     }
 
     @Override

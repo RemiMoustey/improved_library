@@ -25,6 +25,8 @@ public class Book {
 
     private String publisher;
 
+    private Integer copies;
+
     public Book() {
 
     }
@@ -91,6 +93,14 @@ public class Book {
 
     public void setPublisher(String publisher) {
         this.publisher = publisher;
+    }
+
+    public Integer getCopies() {
+        return copies;
+    }
+
+    public void setCopies(Integer copies) {
+        this.copies = copies;
     }
 
     @Override
