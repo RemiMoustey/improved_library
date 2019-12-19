@@ -48,19 +48,6 @@ public class BookController {
 
     @PostMapping(value = "/livres/resultats")
     public List<Book> getListSearchedBooks(@RequestParam String search) {
-//        StringBuilder sb = new StringBuilder();
-////
-////        ((List<Character>) (paramMap.get("search"))).forEach(c -> sb.append(c.toString()));
-////
-////        String result = paramMap.toString();
-////        List<String> listChar = (List<String>) paramMap.get("search");
-////        String string = listChar.get(0);
-//        List<String> listChar = (List<String>) paramMap.get("search");
-//        String string = listChar.get(0);
-
-        //String string = (new String (((List<char[]>) (paramMap.get("search"))).get(0)));
-
         return bookDao.findAllByTitle(search);
-
     }
 }

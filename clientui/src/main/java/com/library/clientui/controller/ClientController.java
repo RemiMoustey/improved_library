@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.jws.WebParam;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -62,19 +64,35 @@ public class ClientController {
 
     @PostMapping(value = "/livres/resultats")
     public String getResults(@RequestParam String search, Model model) {
-        //StringBuilder sb = new StringBuilder();
-
-        //((List<Character>) (paramMap.get("search"))).forEach(c -> sb.append(c.toString()));
-//        List<String> listChar = (List<String>) paramMap.get("search");
-//       String string = listChar.get(0);
-
-        //String string = new String (((List<char[]>) (paramMap.get("search"))).get(0));
-
         List<BookBean> books = BooksProxy.getListSearchedBooks(search);
         model.addAttribute("books", books);
-
-
-
         return "Results";
+    }
+
+    @RequestMapping(value = "/login")
+    public String getLoginPage() {
+        return "Login";
+    }
+
+    @PostMapping(value = "/validation_connection")
+    public void getUserByLogin(@RequestParam String login, @RequestParam String password, HttpServletRequest request, HttpServletResponse response, Model model) {
+        UserBean user = UsersProxy.getUserByLoginAndPassword(login, password);
+        if(user != null) {
+            model.addAttribute("connectedUser", user);
+            request.getSession().setAttribute("connectedUser", user);
+            try {
+                response.sendRedirect("?connected=true");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            request.getSession().setAttribute("connectionError", "Identifiants inconnus");
+            try {
+                response.sendRedirect("/login");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

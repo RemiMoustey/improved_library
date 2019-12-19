@@ -6,11 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 
 @RestController
@@ -38,4 +37,13 @@ public class UserController {
         return ResponseEntity.created(location).build();
     }
 
+    @RequestMapping(value = "/login")
+    public String getLoginPage() {
+        return "Login";
+    }
+
+    @PostMapping(value = "/validation_connection")
+    public User getUserByLogin(@RequestParam String login, @RequestParam String password, HttpServletRequest request) {
+        return userDao.findByLoginAndPassword(login, password);
+    }
 }
