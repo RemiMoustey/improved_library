@@ -1,7 +1,8 @@
 package com.library.mloans.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
-import java.awt.print.Book;
 import java.util.Date;
 
 @Entity

@@ -1,4 +1,4 @@
-.green {
+.green, .prolong-loan a, .prolong-loan a:hover {
     color: #609974;
 }
 
@@ -8,6 +8,10 @@
 
 .green, .red {
     font-weight: bold;
+}
+
+.italic {
+    font-style: italic;
 }
 
 .container {
