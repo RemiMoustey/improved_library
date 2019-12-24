@@ -1,7 +1,6 @@
 package com.library.clientui.proxies;
 
 import com.library.clientui.beans.BookBean;
-import feign.Param;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,5 +18,5 @@ public interface MicroserviceBooksProxy {
     List<BookBean> getListSearchedBooks(@RequestParam String search);
 
     @GetMapping(value = "/liste_prets/{bookIds}")
-    List<BookBean> getListBooksOfLoans(@PathVariable List<Integer> bookIds);
+    List<BookBean> getListBooksOfLoans(@PathVariable String bookIds);
 }

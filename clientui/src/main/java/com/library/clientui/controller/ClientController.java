@@ -134,7 +134,7 @@ public class ClientController {
     }
 
     @GetMapping(value = "/liste_prets/{bookIds}")
-    public String getListBooksOfLoans(@PathVariable List<Integer> bookIds, HttpServletRequest request, Model model) {
+    public String getListBooksOfLoans(@PathVariable String bookIds, HttpServletRequest request, Model model) {
         List<BookBean> booksOfLoans = BooksProxy.getListBooksOfLoans(bookIds);
         model.addAttribute("loans", request.getSession().getAttribute("loans"));
         model.addAttribute("booksOfLoans", booksOfLoans);
