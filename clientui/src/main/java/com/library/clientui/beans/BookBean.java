@@ -1,9 +1,11 @@
 package com.library.clientui.beans;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 
+@Table(name = "bookBean")
 public class BookBean {
 
+    @Column(name = "id")
     private int id;
 
     private String title;
@@ -22,8 +24,15 @@ public class BookBean {
 
     private int copies;
 
+    @OneToOne(mappedBy = "bookBean")
+    private LoanBean loanBean;
+
     public BookBean() {
 
+    }
+
+    public BookBean(int id) {
+        this.id = id;
     }
 
     public int getId() {

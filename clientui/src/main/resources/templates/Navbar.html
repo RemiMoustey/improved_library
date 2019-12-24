@@ -18,10 +18,10 @@
                     <a class="nav-link" href="/login">Se connecter</a>
                 </li>
                 <li class="nav-item" th:if="${#request.getParameter('connected') != null}">
-                    <a class="nav-link" th:href="@{|/loans/${session.connectedUser}|}">Mes prêts</a>
+                    <a class="nav-link" th:href="@{/prets/8}">Mes prêts</a> <!-- REPLACE 1 BY THE ID OF THE USER -->
                 </li>
                 <li class="nav-item" th:if="${#request.getParameter('connected') != null}">
-                    <a class="nav-link" href="/logout">Se déconnecter</a>
+                    <a class="nav-link" th:href="@{/logout}">Se déconnecter</a>
                 </li>
             </ul>
         </nav>

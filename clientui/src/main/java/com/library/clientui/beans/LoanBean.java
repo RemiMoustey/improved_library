@@ -1,18 +1,39 @@
 package com.library.clientui.beans;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Table(name = "loanBean")
 public class LoanBean {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private int id;
 
     private int userId;
 
-    private int bookId;
-
     private Date deadline;
 
     private boolean isExtended;
+
+    private int bookId;
+
+    public LoanBean() {
+
+    }
+
+    public LoanBean(int bookId) {
+        this.bookId = bookId;
+    }
+
+    public int getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
+    }
 
     public int getId() {
         return id;
@@ -30,13 +51,6 @@ public class LoanBean {
         this.userId = userId;
     }
 
-    public int getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(int bookId) {
-        this.bookId = bookId;
-    }
 
     public Date getDeadline() {
         return deadline;
@@ -59,9 +73,9 @@ public class LoanBean {
         return "LoanBean{" +
                 "id=" + id +
                 ", userId=" + userId +
-                ", bookId=" + bookId +
                 ", deadline=" + deadline +
                 ", isExtended=" + isExtended +
+                ", bookId=" + bookId +
                 '}';
     }
 }

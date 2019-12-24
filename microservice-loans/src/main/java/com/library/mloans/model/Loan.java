@@ -1,9 +1,10 @@
 package com.library.mloans.model;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.awt.print.Book;
 import java.util.Date;
 
+@Entity
 public class Loan {
 
     @Id
@@ -17,6 +18,14 @@ public class Loan {
     private Date deadline;
 
     private Boolean isExtended;
+
+    public Loan() {
+
+    }
+
+    public Loan(Integer bookId) {
+        this.bookId = bookId;
+    }
 
     public Integer getId() {
         return id;

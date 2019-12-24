@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Enregistrement validé</title>
+    <div th:replace="Header :: header"></div>
+</head>
+
+<body>
+
+<div th:each="book : ${booksOfLoans}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
+    <p th:text="${book.title}"></p>
+</div>
+<p>Voilà</p>
+<script type="text/javascript" src="http://localhost:8080/webjars/bootstrap/4.0.0-2/js/bootstrap.min.js"></script>
+</body>
+</html>

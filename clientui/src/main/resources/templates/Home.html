@@ -8,6 +8,11 @@
             <div th:replace="Navbar :: navbar"></div>
             <div class="container">
                 <h1 class="text-center">Les ouvrages disponibles</h1>
+                <form method="post" action="/nouveau_pret">
+                    <input type="hidden" name="bookId" id="bookId" th:value="3" />
+                    <input type="hidden" name="userId" id="userId" th:value="8" />
+                    <button type="submit" name="submit" value="value" class="link-button">Réserver ce livre (test de prêt)</button>
+                </form>
                 <form method="post" th:action="@{/livres/resultats}" class="form-search">
                     <div class="pb-4 search-radio mx-auto mt-5">
                         <input size="40" type="text" th:name="search" id="search" placeholder="Effectuez votre recherche" required />

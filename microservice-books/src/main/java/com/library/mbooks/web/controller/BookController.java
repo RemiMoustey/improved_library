@@ -1,24 +1,15 @@
 package com.library.mbooks.web.controller;
 
-import com.library.mbooks.configurations.ApplicationPropertiesConfiguration;
 import com.library.mbooks.dao.BookDao;
 import com.library.mbooks.model.Book;
 import com.library.mbooks.web.exceptions.BookNotFoundException;
-import com.sun.org.apache.xpath.internal.operations.Mult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.ui.ModelMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+
 
 @RestController
 public class BookController {
@@ -49,5 +40,14 @@ public class BookController {
     @PostMapping(value = "/livres/resultats")
     public List<Book> getListSearchedBooks(@RequestParam String search) {
         return bookDao.findAllByTitle(search);
+    }
+
+    @GetMapping(value = "/liste_prets/{bookIds}")
+    public List<Book> getListBooksOfLoans(@PathVariable List<Integer> bookIds) {
+        List<Book> booksOfLoans = bookDao.findAllByIdIn(bookIds);
+
+        if(booksOfLoans.isEmpty()) throw new BookNotFoundException("Aucun livre n'est disponible");
+
+        return booksOfLoans;
     }
 }
