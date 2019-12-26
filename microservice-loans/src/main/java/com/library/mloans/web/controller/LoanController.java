@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.List;
 
@@ -38,8 +37,30 @@ public class LoanController {
         return ResponseEntity.created(location).build();
     }
 
+    @GetMapping(value = "/retour_pret/{id}")
+    public void deleteLoan(@PathVariable int id) {
+        loanDao.deleteById(id);
+    }
+
     @GetMapping(value = "/prets/{userId}")
     public List<Loan> getLoans(@PathVariable int userId) {
         return loanDao.findAllByUserId(userId);
+    }
+
+    @PostMapping(value = "/prolongation")
+    public ResponseEntity<Void> updateExtendedLoan(@RequestBody Loan extendedLoan) {
+        Loan updatedLoan = loanDao.save(extendedLoan);
+
+        if (updatedLoan == null) {
+            return ResponseEntity.noContent().build();
+        }
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(updatedLoan.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 }

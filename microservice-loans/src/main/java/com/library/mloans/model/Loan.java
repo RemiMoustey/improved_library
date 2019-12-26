@@ -24,8 +24,8 @@ public class Loan {
 
     }
 
-    public Loan(Integer bookId) {
-        this.bookId = bookId;
+    public Loan(int id) {
+        this.id = id;
     }
 
     public Integer getId() {

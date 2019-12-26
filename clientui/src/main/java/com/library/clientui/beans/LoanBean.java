@@ -10,7 +10,6 @@ public class LoanBean {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
     private int id;
 
     private int userId;
@@ -25,8 +24,8 @@ public class LoanBean {
 
     }
 
-    public LoanBean(int bookId) {
-        this.bookId = bookId;
+    public LoanBean(int id) {
+        this.id = id;
     }
 
     public int getBookId() {

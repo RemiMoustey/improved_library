@@ -15,9 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @Controller
 public class ClientController {
@@ -77,29 +80,21 @@ public class ClientController {
     }
 
     @PostMapping(value = "/validation_connection")
-    public void getUserByLogin(@RequestParam String login, @RequestParam String password, HttpServletRequest request, HttpServletResponse response, Model model) {
+    public void getUserByLogin(@RequestParam String login, @RequestParam String password, HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
         UserBean user = UsersProxy.getUserByLoginAndPassword(login, password);
         if(user != null) {
             model.addAttribute("connectedUser", user);
             request.getSession().setAttribute("connectedUser", user.getId());
-            try {
-                response.sendRedirect("?connected=true");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            response.sendRedirect("?connected=true");
         }
         else {
             request.getSession().setAttribute("connectionError", "Identifiants inconnus");
-            try {
-                response.sendRedirect("/login");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            response.sendRedirect("/login");
         }
     }
 
     @PostMapping(value = "/nouveau_pret")
-    public void insertLoan(HttpServletRequest request, HttpServletResponse response) {
+    public void insertLoan(HttpServletRequest request, HttpServletResponse response) throws IOException {
         LoanBean newLoan = new LoanBean();
         newLoan.setUserId(Integer.parseInt(request.getParameter("userId")));
         newLoan.setBookId(Integer.parseInt(request.getParameter("bookId")));
@@ -108,15 +103,17 @@ public class ClientController {
         calendar.add(Calendar.DAY_OF_YEAR, 28);
         newLoan.setDeadline(calendar.getTime());
         LoansProxy.insertLoan(newLoan);
-        try {
-            response.sendRedirect("/");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        response.sendRedirect("/");
+    }
+
+    @GetMapping(value = "/retour_pret/{id}")
+    public void deleteLoan(@PathVariable int id, HttpServletResponse response) throws IOException {
+        LoansProxy.deleteLoan(id);
+        response.sendRedirect("/");
     }
 
     @GetMapping(value = "/prets/{userId}")
-    public void getLoans(@PathVariable int userId, HttpServletRequest request, HttpServletResponse response) {
+    public void getLoans(@PathVariable int userId, HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<LoanBean> loans = LoansProxy.getLoans(userId);
         request.getSession().setAttribute("loans", loans);
         String redirection = "/liste_prets/";
@@ -126,11 +123,7 @@ public class ClientController {
                 redirection += ",";
             }
         }
-        try {
-            response.sendRedirect(redirection);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        response.sendRedirect(redirection);
     }
 
     @GetMapping(value = "/liste_prets/{bookIds}")
@@ -139,5 +132,25 @@ public class ClientController {
         model.addAttribute("loans", request.getSession().getAttribute("loans"));
         model.addAttribute("booksOfLoans", booksOfLoans);
         return "LoansList";
+    }
+
+    @PostMapping(value = "/prolongation")
+    public void updateExtendedLoan(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        LoanBean updatedLoan = new LoanBean(Integer.parseInt(request.getParameter("id")));
+        updatedLoan.setUserId(Integer.parseInt(request.getParameter("userId")));
+        updatedLoan.setBookId(Integer.parseInt(request.getParameter("bookId")));
+        Calendar calendar = Calendar.getInstance();
+        try {
+            Date date = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy",
+                    Locale.ENGLISH).parse(request.getParameter("deadline"));
+            calendar.setTime(date);
+            calendar.add(Calendar.DAY_OF_YEAR, 28);
+            updatedLoan.setDeadline(calendar.getTime());
+            updatedLoan.setExtended(true);
+            LoansProxy.updateExtendedLoan(updatedLoan);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        response.sendRedirect("/");
     }
 }
