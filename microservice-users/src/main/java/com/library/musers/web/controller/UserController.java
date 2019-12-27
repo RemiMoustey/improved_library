@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.util.List;
 
 @RestController
 public class UserController {
@@ -45,5 +46,10 @@ public class UserController {
     @PostMapping(value = "/validation_connection")
     public User getUserByLogin(@RequestParam String login, @RequestParam String password, HttpServletRequest request) {
         return userDao.findByLoginAndPassword(login, password);
+    }
+
+    @GetMapping(value = "/utilisateurs")
+    public List<User> getAllUsers() {
+        return userDao.findAll();
     }
 }
