@@ -50,4 +50,18 @@ public class BookController {
 
         return booksOfLoans;
     }
+
+    @GetMapping(value = "/stock_baisse/{bookId}")
+    public void updateStockBookDecrement(@PathVariable int bookId) {
+        Book book = bookDao.findById(bookId);
+        book.setCopies(book.getCopies() - 1);
+        bookDao.save(book);
+    }
+
+    @GetMapping(value = "/stock_monte/{bookId}")
+    public void updateStockBookIncrement(@PathVariable int bookId) {
+        Book book = bookDao.findById(bookId);
+        book.setCopies(book.getCopies() + 1);
+        bookDao.save(book);
+    }
 }

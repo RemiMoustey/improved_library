@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Enregistrement validé</title>
+        <title>Prêts en cours</title>
         <div th:replace="Header :: header"></div>
     </head>
 
@@ -27,7 +27,7 @@
                         <button type="submit" name="submit" value="value" class="link-button">Prolonger le prêt</button>
                     </form>
                 </div>
-                <p class="mb-5"><a th:href="@{|/retour_pret/${loan.id}|}">Retourner ce livre (test de retour de prêt)</a></p>
+                <p class="mb-5"><a th:href="@{|/retour_pret/${loan.id}/${loan.bookId}|}">Retourner ce livre (test de retour de prêt)</a></p>
             </div>
         </div>
         <script type="text/javascript" src="http://localhost:8080/webjars/bootstrap/4.0.0-2/js/bootstrap.min.js"></script>

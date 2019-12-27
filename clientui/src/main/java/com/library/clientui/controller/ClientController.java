@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.print.Book;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -103,12 +104,24 @@ public class ClientController {
         calendar.add(Calendar.DAY_OF_YEAR, 28);
         newLoan.setDeadline(calendar.getTime());
         LoansProxy.insertLoan(newLoan);
+        response.sendRedirect("/stock_baisse/" + request.getParameter("bookId"));
+    }
+
+    @GetMapping(value = "/stock_baisse/{bookId}")
+    public void updateStockBookDecrement(@PathVariable int bookId, HttpServletResponse response) throws IOException {
+        BooksProxy.updateStockBookDecrement(bookId);
         response.sendRedirect("/");
     }
 
-    @GetMapping(value = "/retour_pret/{id}")
-    public void deleteLoan(@PathVariable int id, HttpServletResponse response) throws IOException {
-        LoansProxy.deleteLoan(id);
+    @GetMapping(value = "/retour_pret/{id}/{bookId}")
+    public void deleteLoan(@PathVariable int id, @PathVariable int bookId, HttpServletResponse response) throws IOException {
+        LoansProxy.deleteLoan(id, bookId);
+        response.sendRedirect("/stock_monte/" + bookId);
+    }
+
+    @GetMapping(value = "/stock_monte/{bookId}")
+    public void updateStockBookIncrement(@PathVariable int bookId, HttpServletResponse response) throws IOException {
+        BooksProxy.updateStockBookIncrement(bookId);
         response.sendRedirect("/");
     }
 

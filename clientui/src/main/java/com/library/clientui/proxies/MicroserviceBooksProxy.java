@@ -19,4 +19,10 @@ public interface MicroserviceBooksProxy {
 
     @GetMapping(value = "/liste_prets/{bookIds}")
     List<BookBean> getListBooksOfLoans(@PathVariable String bookIds);
+
+    @GetMapping(value = "/stock_baisse/{bookId}")
+    void updateStockBookDecrement(@PathVariable int bookId);
+
+    @GetMapping(value = "/stock_monte/{bookId}")
+    void updateStockBookIncrement(@PathVariable int bookId);
 }

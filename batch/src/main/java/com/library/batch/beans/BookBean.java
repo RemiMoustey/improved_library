@@ -1,6 +1,4 @@
-package com.library.clientui.beans;
-
-import javax.persistence.*;
+package com.library.batch.beans;
 
 public class BookBean {
 

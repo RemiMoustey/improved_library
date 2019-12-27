@@ -16,8 +16,8 @@ public interface MicroserviceLoansProxy {
     @GetMapping(value = "/nouveau_pret")
     ResponseEntity<Void> insertLoan(@RequestBody LoanBean loan);
 
-    @GetMapping(value = "retour_pret/{id}")
-    void deleteLoan(@PathVariable int id);
+    @GetMapping(value = "retour_pret/{id}/{bookId}")
+    void deleteLoan(@PathVariable int id, @PathVariable int bookId);
 
     @PostMapping(value = "/prolongation")
     ResponseEntity<Void> updateExtendedLoan(@RequestBody LoanBean updatedLoan);

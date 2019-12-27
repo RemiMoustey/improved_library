@@ -37,8 +37,8 @@ public class LoanController {
         return ResponseEntity.created(location).build();
     }
 
-    @GetMapping(value = "/retour_pret/{id}")
-    public void deleteLoan(@PathVariable int id) {
+    @GetMapping(value = "/retour_pret/{id}/{bookId}")
+    public void deleteLoan(@PathVariable int id, @PathVariable int bookId) {
         loanDao.deleteById(id);
     }
 
