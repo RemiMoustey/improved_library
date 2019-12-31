@@ -56,7 +56,7 @@ public class ClientController {
     @PostMapping(value = "/validation")
     public void insertUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserBean newUser = new UserBean();
-        newUser.setLogin(request.getParameter("login"));
+        newUser.setUsername(request.getParameter("username"));
         newUser.setPassword(request.getParameter("password"));
         newUser.setEmail(request.getParameter("email"));
         newUser.setAddress(request.getParameter("address"));
@@ -78,20 +78,6 @@ public class ClientController {
     @GetMapping(value = "/login")
     public String getLoginPage() {
         return "Login";
-    }
-
-    @PostMapping(value = "/validation_connection")
-    public void getUserByLogin(@RequestParam String login, @RequestParam String password, HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
-        UserBean user = UsersProxy.getUserByLoginAndPassword(login, password);
-        if(user != null) {
-            model.addAttribute("connectedUser", user);
-            request.getSession().setAttribute("connectedUser", user.getId());
-            response.sendRedirect("/livres?connected=true");
-        }
-        else {
-            request.getSession().setAttribute("connectionError", "Identifiants inconnus");
-            response.sendRedirect("/login");
-        }
     }
 
     @PostMapping(value = "/nouveau_pret")
@@ -166,4 +152,10 @@ public class ClientController {
         }
         response.sendRedirect("/");
     }
+
+    @GetMapping(value = "/logout")
+    public String getLogoutPage() {
+        return "Login";
+    }
+
 }

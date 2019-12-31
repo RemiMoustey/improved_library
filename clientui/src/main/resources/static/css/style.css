@@ -39,11 +39,41 @@
     width: 318px;
 }
 
+.logout-link {
+    background-color: inherit;
+    border: none;
+    color: rgba(0, 0, 0, .5);
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.logout-link:hover {
+    color: rgba(0, 0, 0, .7);
+}
+
+.alert {
+    text-align: center;
+}
+
+.alert-danger p {
+    margin: 0;
+}
+
 @media all and (max-width: 991px) {
     .fixed-top {
         position: static;
     }
+
     .container {
-        margin-top: 0px;
+        margin-top: 0;
+    }
+
+    .navbar-brand {
+        margin-right: 0;
+    }
+
+    .logout-link {
+        padding-left: 0;
+        padding-right: 0;
     }
 }

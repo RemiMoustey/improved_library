@@ -43,11 +43,6 @@ public class UserController {
         return "Login";
     }
 
-    @PostMapping(value = "/validation_connection")
-    public User getUserByLogin(@RequestParam String login, @RequestParam String password, HttpServletRequest request) {
-        return userDao.findByLoginAndPassword(login, password);
-    }
-
     @GetMapping(value = "/utilisateurs")
     public List<User> getAllUsers() {
         return userDao.findAll();

@@ -4,7 +4,7 @@ public class UserBean {
 
     private int id;
 
-    private String login;
+    private String username;
 
     private String password;
 
@@ -32,12 +32,12 @@ public class UserBean {
         this.id = id;
     }
 
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -100,7 +100,7 @@ public class UserBean {
     public String toString() {
         return "UserBean{" +
                 "id=" + id +
-                ", login='" + login + '\'' +
+                ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", address='" + address + '\'' +
