@@ -2,27 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1a194c8d-6c49-49cd-aca0-6b2120c44c4f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/clientui/src/main/java/com/library/clientui/beans/LoanBean.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clientui/src/main/java/com/library/clientui/proxies/MicroserviceLoansProxy.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clientui/src/main/resources/templates/Results.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/microservice-loans/src/main/java/com/library/mloans/dao/LoanDao.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/microservice-loans/src/main/java/com/library/mloans/exceptions/LoanNotFoundException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/microservice-loans/src/main/java/com/library/mloans/model/Loan.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/microservice-loans/src/main/java/com/library/mloans/web/controller/LoanController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clientui/src/main/java/com/library/clientui/beans/BookBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/clientui/src/main/java/com/library/clientui/beans/BookBean.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/zuul-server/src/main/java/com/library/zuulserver/filters/LogFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/zuul-server/src/main/java/com/library/zuulserver/filters/ResponseFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/zuul-server/src/main/java/com/library/zuulserver/security/WebSecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/batch/src/main/java/com/library/batch/BatchApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/batch/src/main/java/com/library/batch/BatchApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/clientui/src/main/java/com/library/clientui/controller/ClientController.java" beforeDir="false" afterPath="$PROJECT_DIR$/clientui/src/main/java/com/library/clientui/controller/ClientController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/clientui/src/main/java/com/library/clientui/proxies/MicroserviceBooksProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/clientui/src/main/java/com/library/clientui/proxies/MicroserviceBooksProxy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clientui/src/main/resources/static/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/clientui/src/main/resources/static/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clientui/src/main/resources/static/img/chaperon.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/clientui/src/main/resources/static/img/chaperon.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clientui/src/main/resources/static/img/contes.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/clientui/src/main/resources/static/img/contes.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clientui/src/main/resources/static/img/cyrano.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/clientui/src/main/resources/static/img/cyrano.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clientui/src/main/resources/static/img/miserables.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/clientui/src/main/resources/static/img/miserables.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clientui/src/main/resources/templates/CardBook.html" beforeDir="false" afterPath="$PROJECT_DIR$/clientui/src/main/resources/templates/CardBook.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clientui/src/main/resources/templates/Home.html" beforeDir="false" afterPath="$PROJECT_DIR$/clientui/src/main/resources/templates/Home.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/microservice-books/src/main/java/com/library/mbooks/dao/BookDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/microservice-books/src/main/java/com/library/mbooks/dao/BookDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/microservice-books/src/main/java/com/library/mbooks/model/Book.java" beforeDir="false" afterPath="$PROJECT_DIR$/microservice-books/src/main/java/com/library/mbooks/model/Book.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/microservice-books/src/main/java/com/library/mbooks/web/controller/BookController.java" beforeDir="false" afterPath="$PROJECT_DIR$/microservice-books/src/main/java/com/library/mbooks/web/controller/BookController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/microservice-books/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/microservice-books/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clientui/src/main/java/com/library/clientui/proxies/MicroserviceLoansProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/clientui/src/main/java/com/library/clientui/proxies/MicroserviceLoansProxy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clientui/src/main/java/com/library/clientui/proxies/MicroserviceUsersProxy.java" beforeDir="false" afterPath="$PROJECT_DIR$/clientui/src/main/java/com/library/clientui/proxies/MicroserviceUsersProxy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clientui/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/clientui/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/microservice-books/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/microservice-books/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/microservice-books/src/main/java/com/library/mbooks/MicroserviceBooksApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/microservice-books/src/main/java/com/library/mbooks/MicroserviceBooksApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/microservice-loans/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/microservice-loans/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/microservice-loans/src/main/java/com/library/mloans/MicroserviceLoansApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/microservice-loans/src/main/java/com/library/mloans/MicroserviceLoansApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/microservice-users/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/microservice-users/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/microservice-users/src/main/java/com/library/musers/MicroserviceUsersApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/microservice-users/src/main/java/com/library/musers/MicroserviceUsersApplication.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -64,6 +59,7 @@
       <updated>1576497601830</updated>
       <workItem from="1576497603357" duration="9000" />
       <workItem from="1576583997510" duration="19000" />
+      <workItem from="1577775746532" duration="28000" />
     </task>
     <servers />
   </component>

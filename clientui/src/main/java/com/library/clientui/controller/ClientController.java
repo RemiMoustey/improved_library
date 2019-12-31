@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.print.Book;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,27 +34,27 @@ public class ClientController {
     @Autowired
     private MicroserviceLoansProxy LoansProxy;
 
-    @GetMapping(value = "/")
+    @GetMapping(value = "/livres")
     public String getHome(Model model) {
         List<BookBean> books = BooksProxy.getListBooks();
         model.addAttribute("books", books);
         return "Home";
     }
 
-    @GetMapping(value = "details-book/{id}")
+    @GetMapping(value = "/livres/{id}")
     public String getCardBook(@PathVariable int id, Model model) {
         BookBean book = BooksProxy.getBook(id);
         model.addAttribute("book", book);
         return "CardBook";
     }
 
-    @GetMapping(value = "/register")
+    @GetMapping(value = "/inscription")
     public String getRegister(Model model) {
         return "Register";
     }
 
     @PostMapping(value = "/validation")
-    public void insertUser(HttpServletRequest request) {
+    public void insertUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserBean newUser = new UserBean();
         newUser.setLogin(request.getParameter("login"));
         newUser.setPassword(request.getParameter("password"));
@@ -66,6 +65,7 @@ public class ClientController {
         newUser.setNumber(Integer.parseInt(request.getParameter("number")));
         newUser.setPhoneNumber(request.getParameter("phoneNumber"));
         UsersProxy.insertUser(newUser);
+        response.sendRedirect("/livres");
     }
 
     @PostMapping(value = "/livres/resultats")
@@ -86,7 +86,7 @@ public class ClientController {
         if(user != null) {
             model.addAttribute("connectedUser", user);
             request.getSession().setAttribute("connectedUser", user.getId());
-            response.sendRedirect("?connected=true");
+            response.sendRedirect("/livres?connected=true");
         }
         else {
             request.getSession().setAttribute("connectionError", "Identifiants inconnus");

@@ -70,7 +70,7 @@
                                     <span th:if="${book.copies > 0}"><td scope="col" th:text="${book.copies}" class="green"></td></span>
                                 </tr>-->
                             </table>
-                            <p class="text-center"><a th:href="@{|/details-book/${book.id}|}">
+                            <p class="text-center"><a th:href="@{|/livres/${book.id}|}">
                                 <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></a>
                             </p>
                         </div>

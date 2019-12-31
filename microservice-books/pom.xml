@@ -23,14 +23,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.library</groupId>
-			<artifactId>microservice-loans</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.library</groupId>
-			<artifactId>microservice-users</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
@@ -68,6 +60,16 @@
             <version>10.4.0</version>
             <scope>compile</scope>
         </dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+		</dependency>
     </dependencies>
 
 	<dependencyManagement>
