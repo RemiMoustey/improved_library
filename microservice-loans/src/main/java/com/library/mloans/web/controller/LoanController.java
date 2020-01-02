@@ -1,6 +1,7 @@
 package com.library.mloans.web.controller;
 
 import com.library.mloans.dao.LoanDao;
+import com.library.mloans.exceptions.LoanNotFoundException;
 import com.library.mloans.model.Loan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,11 @@ public class LoanController {
 
     @GetMapping(value = "/prets/{userId}")
     public List<Loan> getLoans(@PathVariable int userId) {
-        return loanDao.findAllByUserId(userId);
+        List<Loan> loans = loanDao.findAllByUserId(userId);
+
+        if(loans.isEmpty()) throw new LoanNotFoundException("Aucun prêt n'est disponible");
+
+        return loans;
     }
 
     @PostMapping(value = "/prolongation")
@@ -62,5 +67,14 @@ public class LoanController {
                 .toUri();
 
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping(value = "tous_les_prets")
+    public List<Loan> getAllLoans() {
+        List<Loan> loans = loanDao.findAll();
+
+        if(loans.isEmpty()) throw new LoanNotFoundException("Aucun prêt n'est disponible");
+
+        return loans;
     }
 }

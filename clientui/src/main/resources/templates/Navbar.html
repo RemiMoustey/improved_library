@@ -1,37 +1,44 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
     <div th:fragment="navbar">
         <nav class="navbar navbar-expand-lg bg-light navbar-light fixed-top">
-            <ul class="navbar-nav d-flex align-items-center m-auto">
-                <li class=nav-item>
-                    <a class="navbar-brand" href="/livres">
-                        <img src="/img/logo.png" alt="Logo de la bibliothèque" />
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/livres">Accueil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/inscription">S'inscrire</a>
-                </li>
-                <span sec:authorize="isAnonymous()">
+            <ul class="navbar-nav d-flex align-items-center flex-column m-auto">
+                <div class="d-lg-flex align-items-lg-center text-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="/login">Se connecter</a>
+                        <a class="navbar-brand" href="/livres">
+                            <img src="/img/logo.png" alt="Logo de la bibliothèque" />
+                        </a>
                     </li>
-                </span>
-                <span sec:authorize="isAuthenticated()">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/prets/3}">Mes prêts</a> <!-- REPLACE 1 BY THE ID OF THE USER -->
+                        <h1 class="title-library">Bibliothèque Municipale</h1>
                     </li>
-                </span>
-                <span sec:authorize="isAuthenticated()">
+                </div>
+                <div class="links-menu d-lg-flex">
                     <li class="nav-item">
-                        <form th:action="@{/logout}" method="post">
-                            <input class="logout-link" type="submit" value="Se déconnecter" />
-                        </form>
+                        <a class="nav-link" href="/livres">Accueil</a>
                     </li>
-                </span>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/inscription">S'inscrire</a>
+                    </li>
+                    <div sec:authorize="!isAuthenticated()">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login">Se connecter</a>
+                        </li>
+                    </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{|/prets/${userId}|}">Mes prêts</a> <!-- REPLACE 1 BY THE ID OF THE USER -->
+                        </li>
+                    </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <li class="nav-item">
+                            <form th:action="@{/logout}" method="post">
+                                <input class="logout-link" type="submit" value="Se déconnecter" />
+                            </form>
+                        </li>
+                    </div>
+                </div>
             </ul>
         </nav>
     </div>

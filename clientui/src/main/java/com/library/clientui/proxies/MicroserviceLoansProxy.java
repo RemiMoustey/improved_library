@@ -23,4 +23,7 @@ public interface MicroserviceLoansProxy {
 
     @PostMapping(value = "/microservice-loans/prolongation")
     ResponseEntity<Void> updateExtendedLoan(@RequestBody LoanBean updatedLoan);
+
+    @GetMapping(value = "microservice-loans/tous_les_prets")
+    List<LoanBean> getAllLoans();
 }

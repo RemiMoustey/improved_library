@@ -19,4 +19,7 @@ public interface MicroserviceUsersProxy {
 
     @GetMapping(value = "/utilisateurs")
     List<UserBean> getAllUsers();
+
+    @GetMapping(value = "/microservice-users/utilisateur/{username}")
+    UserBean getUserByUsername(@PathVariable String username);
 }

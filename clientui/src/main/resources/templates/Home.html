@@ -2,22 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8">
-        <title>Liste des livres</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Liste des livres de la bibliothèque municipale</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="/css/style.css" />
     </head>
     <body>
         <div th:replace="Navbar :: navbar"></div>
         <div class="container">
-            <h1 class="text-center">Les ouvrages disponibles</h1>
-            <form method="post" action="/nouveau_pret">
+            <h2 class="text-center">Les ouvrages disponibles</h2>
+            <form method="post" action="/nouveau_pret" class="text-center mt-5">
                 <input type="hidden" name="bookId" id="bookId" th:value="2" />
-                <input type="hidden" name="userId" id="userId" th:value="8" />
+                <input type="hidden" name="userId" id="userId" th:value="4" />
                 <button type="submit" name="submit" value="value" class="link-button">Réserver ce livre (test de prêt)</button>
             </form>
             <form method="post" th:action="@{/livres/resultats}" class="form-search">
-                <div class="pb-4 search-radio mx-auto mt-5">
-                    <input size="40" type="text" th:name="search" id="search" placeholder="Effectuez votre recherche" required />
+                <div class="pb-4 search-radio mx-auto mt-5 text-center">
+                    <input size="27" type="text" th:name="search" id="search" placeholder="Effectuez votre recherche" required />
                 </div>
                 <div class="text-center">
                     <input type="submit" value="Rechercher" />

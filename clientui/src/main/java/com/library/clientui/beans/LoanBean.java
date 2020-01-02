@@ -1,6 +1,5 @@
 package com.library.clientui.beans;
 
-import javax.persistence.*;
 import java.util.Date;
 
 public class LoanBean {

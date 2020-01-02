@@ -39,9 +39,7 @@ public class BatchApplication {
 					BookBean book = restTemplate.getForObject("http://localhost:9001/livres/" + loansList.get(j).getBookId(), BookBean.class);
 					try {
 						readPropertiesAndSend(usersList.get(i).getEmail(), book.getTitle(), new SimpleDateFormat("dd/MM/yyy").format(loansList.get(j).getDeadline()));
-					} catch (MessagingException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
+					} catch (MessagingException | IOException e) {
 						e.printStackTrace();
 					}
 				}
@@ -51,17 +49,10 @@ public class BatchApplication {
 
 	public static Properties load(String filename) throws IOException {
 		Properties properties = new Properties();
-		FileInputStream input = new FileInputStream(filename);
-		try {
+		try(FileInputStream input = new FileInputStream(filename)) {
 			properties.load(input);
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				input.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 		return properties;
 	}

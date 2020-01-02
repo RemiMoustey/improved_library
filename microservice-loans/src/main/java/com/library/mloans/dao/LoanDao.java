@@ -10,4 +10,5 @@ import java.util.List;
 public interface LoanDao extends JpaRepository<Loan, Integer> {
     List<Loan> findAllByUserId(int userId);
     void deleteById(int id);
+    List<Loan> findAll();
 }

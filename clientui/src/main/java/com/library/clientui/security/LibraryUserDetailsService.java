@@ -21,10 +21,11 @@ public class LibraryUserDetailsService implements UserDetailsService {
         if (!user.isPresent()) {
             throw new UsernameNotFoundException("User not found by name: " + username);
         }
+
         return buildUserDetails(user.get());
     }
 
     public UserDetails buildUserDetails(UserBean user) {
-        return User.withUsername(user.getUsername()).password("{noop}" + user.getPassword()).roles("USER").build();
+        return User.withUsername(user.getUsername()).password("{bcrypt}" + user.getPassword()).roles("USER").build();
     }
 }

@@ -7,9 +7,13 @@ import com.library.clientui.proxies.MicroserviceBooksProxy;
 import com.library.clientui.proxies.MicroserviceLoansProxy;
 import com.library.clientui.proxies.MicroserviceUsersProxy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,10 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Controller
 public class ClientController {
@@ -34,10 +35,21 @@ public class ClientController {
     @Autowired
     private MicroserviceLoansProxy LoansProxy;
 
+    public void catchLoggedUserId(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        RestTemplate restTemplate = new RestTemplate();
+        UserBean loggedUser = restTemplate.getForObject("http://localhost:9002/utilisateur/" + username, UserBean.class);
+        if(loggedUser != null) {
+            model.addAttribute("userId", loggedUser.getId());
+        }
+    }
+
     @GetMapping(value = "/livres")
     public String getHome(Model model) {
         List<BookBean> books = BooksProxy.getListBooks();
         model.addAttribute("books", books);
+        catchLoggedUserId(model);
         return "Home";
     }
 
@@ -45,11 +57,13 @@ public class ClientController {
     public String getCardBook(@PathVariable int id, Model model) {
         BookBean book = BooksProxy.getBook(id);
         model.addAttribute("book", book);
+        catchLoggedUserId(model);
         return "CardBook";
     }
 
     @GetMapping(value = "/inscription")
     public String getRegister(Model model) {
+        catchLoggedUserId(model);
         return "Register";
     }
 
@@ -57,7 +71,7 @@ public class ClientController {
     public void insertUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserBean newUser = new UserBean();
         newUser.setUsername(request.getParameter("username"));
-        newUser.setPassword(request.getParameter("password"));
+        newUser.setPassword(new BCryptPasswordEncoder().encode(request.getParameter("password")));
         newUser.setEmail(request.getParameter("email"));
         newUser.setAddress(request.getParameter("address"));
         newUser.setPostalCode(Integer.parseInt(request.getParameter("postalCode")));
@@ -76,7 +90,8 @@ public class ClientController {
     }
 
     @GetMapping(value = "/login")
-    public String getLoginPage() {
+    public String getLoginPage(Model model) {
+        catchLoggedUserId(model);
         return "Login";
     }
 
@@ -96,7 +111,7 @@ public class ClientController {
     @GetMapping(value = "/stock_baisse/{bookId}")
     public void updateStockBookDecrement(@PathVariable int bookId, HttpServletResponse response) throws IOException {
         BooksProxy.updateStockBookDecrement(bookId);
-        response.sendRedirect("/");
+        response.sendRedirect("/livres");
     }
 
     @GetMapping(value = "/retour_pret/{id}/{bookId}")
@@ -108,21 +123,40 @@ public class ClientController {
     @GetMapping(value = "/stock_monte/{bookId}")
     public void updateStockBookIncrement(@PathVariable int bookId, HttpServletResponse response) throws IOException {
         BooksProxy.updateStockBookIncrement(bookId);
-        response.sendRedirect("/");
+        response.sendRedirect("/livres");
     }
 
     @GetMapping(value = "/prets/{userId}")
     public void getLoans(@PathVariable int userId, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        List<LoanBean> loans = LoansProxy.getLoans(userId);
-        request.getSession().setAttribute("loans", loans);
-        String redirection = "/liste_prets/";
-        for (int i = 0; i < loans.size(); i++) {
-            redirection += loans.get(i).getBookId();
-            if(i < loans.size() - 1) {
-                redirection += ",";
+        RestTemplate restTemplate = new RestTemplate();
+        List<LoanBean> allLoans = Arrays.asList(restTemplate.getForEntity("http://localhost:9003/tous_les_prets", LoanBean[].class).getBody());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserBean loggedUser = restTemplate.getForObject("http://localhost:9002/utilisateur/" + username, UserBean.class);
+        boolean hasLoanForUser = false;
+        for(LoanBean loan : allLoans) {
+            hasLoanForUser = (loan.getUserId() == userId) ? true : false;
+            if(hasLoanForUser) {
+                break;
             }
         }
-        response.sendRedirect(redirection);
+        if(hasLoanForUser) {
+            List<LoanBean> loans = LoansProxy.getLoans(userId);
+            request.getSession().setAttribute("loans", loans);
+            String redirection = "/liste_prets/";
+            for (int i = 0; i < loans.size(); i++) {
+                redirection += loans.get(i).getBookId();
+                if (i < loans.size() - 1) {
+                    redirection += ",";
+                }
+            }
+            response.sendRedirect(redirection);
+        } else if(loggedUser.getId() != userId) {
+            response.sendRedirect("/acces_refuse");
+        }
+        else {
+            response.sendRedirect("/aucun_pret");
+        }
     }
 
     @GetMapping(value = "/liste_prets/{bookIds}")
@@ -130,7 +164,14 @@ public class ClientController {
         List<BookBean> booksOfLoans = BooksProxy.getListBooksOfLoans(bookIds);
         model.addAttribute("loans", request.getSession().getAttribute("loans"));
         model.addAttribute("booksOfLoans", booksOfLoans);
+        catchLoggedUserId(model);
         return "LoansList";
+    }
+
+    @GetMapping(value = "/aucun_pret")
+    public String getNoLoans(Model model) {
+        catchLoggedUserId(model);
+        return "NoLoans";
     }
 
     @PostMapping(value = "/prolongation")
@@ -150,12 +191,19 @@ public class ClientController {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        response.sendRedirect("/");
+        response.sendRedirect("/livres");
     }
 
     @GetMapping(value = "/logout")
-    public String getLogoutPage() {
+    public String getLogoutPage(Model model) {
+        catchLoggedUserId(model);
         return "Login";
+    }
+
+    @GetMapping(value = "acces_refuse")
+    public String getDeclinedAccess(Model model) {
+        catchLoggedUserId(model);
+        return "DeclinedAccess";
     }
 
 }

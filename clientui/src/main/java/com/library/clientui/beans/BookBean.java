@@ -1,7 +1,5 @@
 package com.library.clientui.beans;
 
-import javax.persistence.*;
-
 public class BookBean {
 
     private int id;

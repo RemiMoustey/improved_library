@@ -1,9 +1,20 @@
+@font-face {
+    font-family: 'BrushScriptStd';
+    src: url('/fonts/BrushScriptStd.eot');
+    src: local('BrushScriptStd'), url('/fonts/BrushScriptStd.woff') format('woff'), url('/fonts/BrushScriptStd.ttf') format('truetype');
+}
+
 .green, .prolong-loan a, .prolong-loan a:hover {
     color: #609974;
 }
 
 .red {
     color: #F00;
+}
+
+.title-library {
+    font-family: "BrushScriptStd", serif;
+    font-size: 45px;
 }
 
 .green, .red {
@@ -15,7 +26,7 @@
 }
 
 .container {
-    margin-top: 101px;
+    margin-top: 150px;
 }
 
 .book-title {
@@ -36,7 +47,7 @@
 }
 
 .search-radio {
-    width: 318px;
+    width: 290px;
 }
 
 .logout-link {
@@ -52,16 +63,21 @@
 }
 
 .alert {
+    margin-top: 122px !important;
     text-align: center;
 }
 
-.alert-danger p {
+.alert-danger p, .alert-success p {
     margin: 0;
 }
 
 @media all and (max-width: 991px) {
     .fixed-top {
         position: static;
+    }
+
+    .alert {
+        margin-top: 20px !important;
     }
 
     .container {
@@ -75,5 +91,9 @@
     .logout-link {
         padding-left: 0;
         padding-right: 0;
+    }
+
+    .links-menu {
+        text-align: center;
     }
 }
