@@ -45,11 +45,7 @@ public class LoanController {
 
     @GetMapping(value = "/prets/{userId}")
     public List<Loan> getLoans(@PathVariable int userId) {
-        List<Loan> loans = loanDao.findAllByUserId(userId);
-
-        if(loans.isEmpty()) throw new LoanNotFoundException("Aucun prêt n'est disponible");
-
-        return loans;
+        return loanDao.findAllByUserId(userId);
     }
 
     @PostMapping(value = "/prolongation")

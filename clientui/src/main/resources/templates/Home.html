@@ -13,7 +13,7 @@
             <h2 class="text-center">Les ouvrages disponibles</h2>
             <form method="post" action="/nouveau_pret" class="text-center mt-5">
                 <input type="hidden" name="bookId" id="bookId" th:value="2" />
-                <input type="hidden" name="userId" id="userId" th:value="4" />
+                <input type="hidden" name="userId" id="userId" th:value="7" />
                 <button type="submit" name="submit" value="value" class="link-button">Réserver ce livre (test de prêt)</button>
             </form>
             <form method="post" th:action="@{/livres/resultats}" class="form-search">

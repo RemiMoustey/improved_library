@@ -59,7 +59,6 @@ public class BatchApplication {
 
 	public static void readPropertiesAndSend(String mailReader, String titleBook, String deadline) throws MessagingException, IOException {
 		Properties properties = BatchApplication.load("C:\\library\\batch\\src\\main\\resources\\com.library.batch\\configuration.properties");
-
 		Session session = Session.getDefaultInstance(properties);
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(properties.getProperty("mail.smtp.user")));

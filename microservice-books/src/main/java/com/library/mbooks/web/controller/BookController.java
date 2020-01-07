@@ -39,7 +39,7 @@ public class BookController {
 
     @PostMapping(value = "/livres/resultats")
     public List<Book> getListSearchedBooks(@RequestParam String search) {
-        return bookDao.findAllByTitle(search);
+        return bookDao.findAllByCriteria(search);
     }
 
     @GetMapping(value = "/liste_prets/{bookIds}")
