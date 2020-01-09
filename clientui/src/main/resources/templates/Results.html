@@ -10,11 +10,20 @@
     <body>
         <div th:replace="Navbar :: navbar"></div>
         <div class="container">
-            <h1 class="text-center">Résultats de la recherche "<span th:text="${#request.getParameter('search')}"></span>"</h1>
+            <h3 class="text-center">Effectuer une autre recherche</h3>
+            <form method="post" th:action="@{/livres/resultats}" class="form-search">
+                <div class="pb-4 search-radio mx-auto mt-5 text-center">
+                    <input size="27" type="text" th:name="search" id="search" placeholder="Effectuez votre recherche" required />
+                </div>
+                <div class="text-center mb-5">
+                    <input type="submit" value="Rechercher" />
+                </div>
+            </form>
+            <h1 class="text-center">Résultats de la recherche "<span th:text="${search}"></span>"</h1>
                 <h3>Ouvrage(s) dont le titre correspond à la recherche :</h3>
                 <div class="row">
                     <div th:each="book : ${books}">
-                        <div th:if="${#strings.contains(book.title.toLowerCase(), #request.getParameter('search').toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
+                        <div th:if="${#strings.contains(book.title.toLowerCase(), search.toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
                             <p class="text-center"><a th:href="@{|/details-book/${book.id}|}">
                                 <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></a>
                             </p>
@@ -24,7 +33,7 @@
                 <h3>Ouvrage(s) dont le nom de l'auteur correspond à la recherche :</h3>
                 <div class="row">
                     <div th:each="book : ${books}">
-                        <div th:if="${#strings.contains(book.author.toLowerCase(), #request.getParameter('search').toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
+                        <div th:if="${#strings.contains(book.author.toLowerCase(), search.toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
                             <p class="text-center"><a th:href="@{|/details-book/${book.id}|}">
                                 <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></a>
                             </p>
@@ -34,7 +43,7 @@
                 <h3>Ouvrage(s) dont l'éditeur correspond à la recherche :</h3>
                 <div class="row">
                     <div th:each="book : ${books}">
-                        <div th:if="${#strings.contains(book.publisher.toLowerCase(), #request.getParameter('search').toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
+                        <div th:if="${#strings.contains(book.publisher.toLowerCase(), search.toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
                             <p class="text-center"><a th:href="@{|/details-book/${book.id}|}">
                                 <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></a>
                             </p>
@@ -44,7 +53,7 @@
                 <h3>Ouvrage(s) dont l'ISBN correspond à la recherche :</h3>
                 <div class="row">
                     <div th:each="book : ${books}">
-                        <div th:if="${#strings.contains(book.isbn.toLowerCase(), #request.getParameter('search').toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
+                        <div th:if="${#strings.contains(book.isbn.toLowerCase(), search.toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
                             <p class="text-center"><a th:href="@{|/details-book/${book.id}|}">
                                 <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></a>
                             </p>

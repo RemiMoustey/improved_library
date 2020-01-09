@@ -13,10 +13,9 @@ import java.util.Optional;
 
 public class LibraryUserDetailsService implements UserDetailsService {
 
-    private static List<UserBean> users = Arrays.asList(new RestTemplate().getForEntity("http://localhost:9002/utilisateurs/", UserBean[].class).getBody());
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        List<UserBean> users = Arrays.asList(new RestTemplate().getForEntity("http://localhost:9002/utilisateurs/", UserBean[].class).getBody());
         Optional<UserBean> user = users.stream().filter(u -> u.getUsername().equals(username)).findAny();
         if (!user.isPresent()) {
             throw new UsernameNotFoundException("User not found by name: " + username);

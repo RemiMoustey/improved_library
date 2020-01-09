@@ -67,10 +67,6 @@ public class LoanController {
 
     @GetMapping(value = "tous_les_prets")
     public List<Loan> getAllLoans() {
-        List<Loan> loans = loanDao.findAll();
-
-        if(loans.isEmpty()) throw new LoanNotFoundException("Aucun prêt n'est disponible");
-
-        return loans;
+        return loanDao.findAll();
     }
 }

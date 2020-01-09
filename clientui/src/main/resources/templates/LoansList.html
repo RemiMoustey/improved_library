@@ -12,6 +12,7 @@
         <div th:replace="Navbar :: navbar"></div>
         <div class="container text-center">
             <h3 class="mb-5">Mes prêts en cours :</h3>
+            <div th:if=""
             <div th:each="loan : ${loans}">
                 <div th:each="bookOfLoan : ${booksOfLoans}">
                     <div th:if="${bookOfLoan.id == loan.bookId}">
@@ -27,7 +28,7 @@
                         <input type="hidden" name="bookId" id="bookId" th:value="${loan.bookId}" />
                         <input type="hidden" name="userId" id="userId" th:value="${loan.userId}" />
                         <input type="hidden" name="deadline" id="deadline" th:value="${loan.deadline}" />
-                        <button type="submit" name="submit" value="value" class="link-button">Prolonger le prêt</button>
+                        <button type="submit" name="submit" value="value" class="link-button" onclick='return confirm("Êtes-vous sûr de vouloir prolonger ce prêt ?")'>Prolonger le prêt</button>
                     </form>
                 </div>
                 <p class="mb-5"><a th:href="@{|/retour_pret/${loan.id}/${loan.bookId}|}">Retourner ce livre (test de retour de prêt)</a></p>

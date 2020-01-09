@@ -11,68 +11,17 @@
         <div th:replace="Navbar :: navbar"></div>
         <div class="container">
             <h2 class="text-center">Les ouvrages disponibles</h2>
-            <form method="post" action="/nouveau_pret" class="text-center mt-5">
-                <input type="hidden" name="bookId" id="bookId" th:value="2" />
-                <input type="hidden" name="userId" id="userId" th:value="7" />
-                <button type="submit" name="submit" value="value" class="link-button">Réserver ce livre (test de prêt)</button>
-            </form>
             <form method="post" th:action="@{/livres/resultats}" class="form-search">
                 <div class="pb-4 search-radio mx-auto mt-5 text-center">
                     <input size="27" type="text" th:name="search" id="search" placeholder="Effectuez votre recherche" required />
                 </div>
-                <div class="text-center">
+                <div class="text-center mb-5">
                     <input type="submit" value="Rechercher" />
                 </div>
             </form>
             <div class="row">
                 <div th:each="book : ${books}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
                     <div class="column-table-link mb-5">
-                        <table class="list-sites table">
-                            <!--<tr>
-                                <th scope="col">
-                                    Titre
-                                </th>
-                                <td scope="col" class="book-title" th:text="${book.title}"></td>
-                            </tr>
-                            <tr>
-                            <tr>
-                                <th scope="col">
-                                    Auteur
-                                </th>
-                                <td scope="col" th:text="${book.author}"></td>
-                            </tr>
-                            <tr>
-                                <th scope="col">
-                                    Année de publication
-                                </th>
-                                <td scope="col" th:text="${book.publicationYear}"></td>
-                            </tr>
-                            <tr>
-                                <th scope="col">
-                                    ISBN
-                                </th>
-                                <td scope="col" th:text="${book.isbn}"></td>
-                            </tr>
-                            <tr>
-                                <th scope="col">
-                                    Nombre de pages
-                                </th>
-                                <td scope="col" th:text="${book.numberOfPages}"></td>
-                            </tr>
-                            <tr>
-                                <th scope="col">
-                                    Éditeur
-                                </th>
-                                <td scope="col" th:text="${book.publisher}"></td>
-                            </tr>
-                            <tr>
-                                <th scope="col">
-                                    Nombre d'exemplaires restants
-                                </th>
-                                <span th:if="${book.copies == 0}"><td scope="col" th:text="${book.copies}" class="red"></td></span>
-                                <span th:if="${book.copies > 0}"><td scope="col" th:text="${book.copies}" class="green"></td></span>
-                            </tr>-->
-                        </table>
                         <p class="text-center"><a th:href="@{|/livres/${book.id}|}">
                             <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></a>
                         </p>

@@ -83,9 +83,20 @@ public class ClientController {
     }
 
     @PostMapping(value = "/livres/resultats")
-    public String getResults(@RequestParam String search, Model model) {
+    public void getResults(@RequestParam String search, HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<BookBean> books = BooksProxy.getListSearchedBooks(search);
-        model.addAttribute("books", books);
+        request.getSession().setAttribute("books", books);
+        response.sendRedirect("/resultats_recherche/" + search);
+    }
+
+    @GetMapping(value = "/resultats_recherche/{search}")
+    public String printResults(@PathVariable String search, Model model, HttpServletRequest request) {
+        if(request.getSession().getAttribute("books") == null) {
+            return "DeclinedAccess";
+        }
+        model.addAttribute("books", request.getSession().getAttribute("books"));
+        request.getSession().removeAttribute("books");
+        model.addAttribute("search", search);
         return "Results";
     }
 

@@ -21,18 +21,14 @@ public class BookController {
 
     @GetMapping(value = "/livres")
     public List<Book> getListBooks() {
-        List<Book> books = bookDao.findAll();
-
-        if(books.isEmpty()) throw new BookNotFoundException("Aucun livre n'est disponible");
-
-        return books;
+        return bookDao.findAll();
     }
 
     @GetMapping(value = "/livres/{id}")
     public Book getBook(@PathVariable int id) {
         Book book = bookDao.findById(id);
 
-        if(book == null) throw new BookNotFoundException("Le livre correspondant à l'id " + id + " n'existe pas.");
+        if(book == null) throw new BookNotFoundException("Le livre correspondant n'existe pas.");
 
         return book;
     }

@@ -2,13 +2,19 @@
 
 Après avoir installé Java, vous pouvez déployer l'applicaiton à l'aide d'un serveur. Nous prendrons ici celui qu'intègre Spring Boot.
 
-Téléchargez tout d'abord le fichier .zip contenant l'application disponible ici : https://github.com/RemiMoustey/Library.Puis, décompressez-le où vous le souhaitez sur votre disque local.
+Téléchargez tout d'abord le fichier .zip contenant l'application disponible ici : 
+    
+    https://github.com/RemiMoustey/Library. 
+    
+Puis, décompressez-le où vous le souhaitez sur votre disque local.
 
 Ensuite, importez chaque dossier présent à la racine en tant que module à l'aide de votre environnement de développement, dans un projet vierge.
 
 **1. Connexion à la base de données.**
 
 Créez un fichier nommé _application.properties_ dans les dossiers _microservice-books/src/main/resources_, _microservice-loans/src/main/resources_ et _microservice-users/src/main/resources_.
+
+Créez trois bases de données appelées book-service, loan-service et user-service.
 
 Ouvrez ces trois fichiers à l'aide d'un éditeur de texte et remplissez-les comme suit :
 
