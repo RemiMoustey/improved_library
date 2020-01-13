@@ -24,7 +24,7 @@
                 <div class="row">
                     <div th:each="book : ${books}">
                         <div th:if="${#strings.contains(book.title.toLowerCase(), search.toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
-                            <p class="text-center"><a th:href="@{|/details-book/${book.id}|}">
+                            <p class="text-center"><a th:href="@{|/livres/${book.id}|}">
                                 <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></a>
                             </p>
                         </div>
