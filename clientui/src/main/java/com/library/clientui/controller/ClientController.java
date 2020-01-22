@@ -2,9 +2,11 @@ package com.library.clientui.controller;
 
 import com.library.clientui.beans.BookBean;
 import com.library.clientui.beans.LoanBean;
+import com.library.clientui.beans.ReservationBean;
 import com.library.clientui.beans.UserBean;
 import com.library.clientui.proxies.MicroserviceBooksProxy;
 import com.library.clientui.proxies.MicroserviceLoansProxy;
+import com.library.clientui.proxies.MicroserviceReservationsProxy;
 import com.library.clientui.proxies.MicroserviceUsersProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -34,6 +36,9 @@ public class ClientController {
 
     @Autowired
     private MicroserviceLoansProxy LoansProxy;
+
+    @Autowired
+    private MicroserviceReservationsProxy ReservationsProxy;
 
     public void catchLoggedUserId(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -217,4 +222,26 @@ public class ClientController {
         return "DeclinedAccess";
     }
 
+    @PostMapping(value = "/reserve_book")
+    public void insertNewReservation(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ReservationBean newReservation = new ReservationBean();
+        newReservation.setBookId(Integer.parseInt(request.getParameter("bookId")));
+        catchLoggedUserId(model);
+        newReservation.setUserId(Integer.parseInt((String) model.getAttribute("userId")));
+        RestTemplate restTemplate = new RestTemplate();
+        List<ReservationBean> listReservations = Arrays.asList(restTemplate.getForEntity("http://localhost:9004/reservations", ReservationBean[].class).getBody());
+        int priority = 1;
+        for(ReservationBean reservation : listReservations) {
+            if (reservation.getBookId() == newReservation.getBookId()) {
+                priority++;
+            }
+        }
+        newReservation.setPriority(priority);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(Calendar.getInstance().getTime());
+        newReservation.setDeadline(calendar.getTime());
+        ReservationsProxy.insertReservation(newReservation);
+
+        response.sendRedirect("/livres?reservation=true");
+    }
 }

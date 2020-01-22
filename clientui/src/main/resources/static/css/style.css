@@ -12,6 +12,10 @@
     color: #F00;
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 .title-library {
     font-family: "BrushScriptStd", serif;
     font-size: 45px;

@@ -29,7 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/css/style.css", "/img/**", "/fonts/**");
-        web.ignoring().antMatchers(HttpMethod.POST, "/validation", "/livres/resultats", "/nouveau_pret", "/prolongation");
+        web.ignoring().antMatchers(HttpMethod.POST, "/validation", "/livres/resultats", "/nouveau_pret", "/prolongation", "/reserve_book");
     }
 
     @Override

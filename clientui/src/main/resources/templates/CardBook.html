@@ -56,6 +56,13 @@
                             </th>
                             <span th:if="${book.copies == 0}"><td scope="col" th:text="${book.copies}" class="red"></td></span>
                             <span th:if="${book.copies > 0}"><td scope="col" th:text="${book.copies}" class="green"></td></span>
+                            <div th:if="${book.copies == 0}" class="mb-5">
+                                <p>Il n'y a plus d'exemplaires en stock, mais vous avez la possibilité de réserver ce livre !</p>
+                                <form method="post" th:action="@{|/reserve_book|}">
+                                    <input type="hidden" name="bookId" id="bookId" th:value="${book.id}" />
+                                    <input class="pointer" type="submit" value="Réserver ce livre" />
+                                </form>
+                            </div>
                         </tr>
                     </table>
                 </div>
