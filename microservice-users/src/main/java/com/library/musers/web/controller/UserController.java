@@ -51,4 +51,9 @@ public class UserController {
     public User getUserByUsername(@PathVariable String username) {
         return userDao.findUserByUsername(username);
     }
+
+    @GetMapping(value = "/utilisateur_id/{userId}")
+    public User getUserById(@PathVariable int userId) {
+        return userDao.findUserById(userId);
+    }
 }

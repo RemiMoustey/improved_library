@@ -1,10 +1,10 @@
-package com.library.mreservations;
+package com.library.batchreservations;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MicroserviceReservationsApplicationTests {
+class BatchReservationsApplicationTests {
 
 	@Test
 	void contextLoads() {

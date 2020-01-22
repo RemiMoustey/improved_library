@@ -14,13 +14,23 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
-
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -63,6 +73,23 @@ public class ClientController {
         BookBean book = BooksProxy.getBook(id);
         model.addAttribute("book", book);
         catchLoggedUserId(model);
+        if(book.getCopies() == 0 && model.getAttribute("userId") != null) {
+            model.addAttribute("numberAllCopies", Arrays.asList(new RestTemplate().getForEntity("http://localhost:9003/tous_les_prets/" + book.getId(), LoanBean[].class).getBody()).size());
+            model.addAttribute("numberReservationsForTheBook", Arrays.asList(new RestTemplate().getForEntity("http://localhost:9004/reservations/" + book.getId(), LoanBean[].class).getBody()).size());
+            List<LoanBean> loansOfUser = Arrays.asList(new RestTemplate().getForEntity("http://localhost:9003/prets/" + model.getAttribute("userId"), LoanBean[].class).getBody());
+            boolean alreadyLent = false;
+            for(LoanBean loanOfUser : loansOfUser) {
+                if(loanOfUser.getBookId() == book.getId()) {
+                    alreadyLent = true;
+                    break;
+                }
+            }
+            if(alreadyLent) {
+                model.addAttribute("alreadyLent", true);
+            } else {
+                model.addAttribute("alreadyLent", false);
+            }
+        }
         return "CardBook";
     }
 
@@ -138,8 +165,21 @@ public class ClientController {
 
     @GetMapping(value = "/stock_monte/{bookId}")
     public void updateStockBookIncrement(@PathVariable int bookId, HttpServletResponse response) throws IOException {
-        BooksProxy.updateStockBookIncrement(bookId);
-        response.sendRedirect("/livres");
+        RestTemplate restTemplate = new RestTemplate();
+        List<ReservationBean> listReservations = Arrays.asList(restTemplate.getForEntity("http://localhost:9004/reservations", ReservationBean[].class).getBody());
+        boolean isReserved = false;
+        for(ReservationBean reservation : listReservations) {
+            if(reservation.getBookId() == bookId) {
+                isReserved = true;
+                break;
+            }
+        }
+        if(!isReserved) {
+            BooksProxy.updateStockBookIncrement(bookId);
+            response.sendRedirect("/livres");
+        } else {
+            response.sendRedirect("/priorite_baisse/" + bookId);
+        }
     }
 
     @GetMapping(value = "/prets/{userId}")
@@ -223,25 +263,54 @@ public class ClientController {
     }
 
     @PostMapping(value = "/reserve_book")
-    public void insertNewReservation(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void insertNewReservation(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ReservationBean newReservation = new ReservationBean();
         newReservation.setBookId(Integer.parseInt(request.getParameter("bookId")));
-        catchLoggedUserId(model);
-        newReservation.setUserId(Integer.parseInt((String) model.getAttribute("userId")));
+        newReservation.setUserId(Integer.parseInt(request.getParameter("userId")));
         RestTemplate restTemplate = new RestTemplate();
         List<ReservationBean> listReservations = Arrays.asList(restTemplate.getForEntity("http://localhost:9004/reservations", ReservationBean[].class).getBody());
         int priority = 1;
-        for(ReservationBean reservation : listReservations) {
-            if (reservation.getBookId() == newReservation.getBookId()) {
-                priority++;
+        if (listReservations != null) {
+            for (ReservationBean reservation : listReservations) {
+                if (reservation.getBookId() == newReservation.getBookId()) {
+                    priority++;
+                }
             }
         }
         newReservation.setPriority(priority);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(Calendar.getInstance().getTime());
-        newReservation.setDeadline(calendar.getTime());
         ReservationsProxy.insertReservation(newReservation);
 
         response.sendRedirect("/livres?reservation=true");
+    }
+
+    @GetMapping(value = "/priorite_baisse/{bookId}")
+    public void updatePriorityReservations(@PathVariable int bookId, HttpServletResponse response) throws IOException, MessagingException {
+        ReservationsProxy.updatePriorityReservations(bookId);
+        List<ReservationBean> listReservations = Arrays.asList(new RestTemplate().getForEntity("http://localhost:9004/reservations", ReservationBean[].class).getBody());
+        for(ReservationBean reservation : listReservations) {
+            BookBean reservedBook = BooksProxy.getBook(bookId);
+            UserBean user = new RestTemplate().getForObject("http://localhost:9002/utilisateur_id/" + reservation.getUserId(), UserBean.class);
+            if(reservation.getPriority() == 0) {
+                InputStream inputStream = getClass().getClassLoader().getResourceAsStream("configuration.properties");
+                Properties properties = new Properties();
+                if(inputStream != null) {
+                    properties.load(inputStream);
+                } else {
+                    throw new FileNotFoundException("Le fichier de propriétés n'existe pas");
+                }
+                Session session = Session.getDefaultInstance(properties);
+                MimeMessage message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(properties.getProperty("mail.smtp.user")));
+                message.setSubject(reservedBook.getTitle() + " vous attend à la bibliothèque");
+                message.setContent("Bonjour,\n\nSuite à votre réservation du livre " + reservedBook.getTitle() + ", nous vous informons que ce dernier est disponible à la bibliothèque dans un délai de 48 heures à compter de l'envoi de ce message. Passé ce délai, votre réservation sera expirée.", "text/plain");
+                message.setRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail()));
+
+                Transport transport = session.getTransport("smtp");
+                transport.connect(properties.getProperty("mail.smtp.host"), properties.getProperty("mail.smtp.user"), properties.getProperty("mail.smtp.password"));
+                transport.sendMessage(message, message.getAllRecipients());
+                transport.close();
+            }
+        }
+        response.sendRedirect("/livres");
     }
 }

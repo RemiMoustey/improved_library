@@ -1,4 +1,4 @@
-# Les Amis de l'escalade : déployer l'application
+# Système d'information de la bibliothèque : déployer l'application
 
 Après avoir installé Java, vous pouvez déployer l'applicaiton à l'aide d'un serveur. Nous prendrons ici celui qu'intègre Spring Boot.
 

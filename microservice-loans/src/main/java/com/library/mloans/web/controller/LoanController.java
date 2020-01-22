@@ -69,4 +69,9 @@ public class LoanController {
     public List<Loan> getAllLoans() {
         return loanDao.findAll();
     }
+
+    @GetMapping(value = "tous_les_prets/{bookId}")
+    public List<Loan> getLoansOfBook(@PathVariable int bookId) {
+        return loanDao.findAllByBookId(bookId);
+    }
 }

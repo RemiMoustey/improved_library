@@ -6,12 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Calendar;
+import java.util.List;
 
 @RestController
 public class ReservationController {
@@ -19,6 +19,11 @@ public class ReservationController {
 
     @Autowired
     ReservationDao reservationDao;
+
+    @GetMapping(value = "/reservations")
+    public List<Reservation> getAllReservations() {
+        return reservationDao.findAll();
+    }
 
     @PostMapping(value = "/reserve_book")
     public ResponseEntity<Void> insertReservation(@RequestBody Reservation reservation) {
@@ -35,5 +40,24 @@ public class ReservationController {
                 .toUri();
 
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping(value = "/reservations/{bookId}")
+    public List<Reservation> getReservationsOfBook(@PathVariable int bookId) {
+        return reservationDao.findAllByBookId(bookId);
+    }
+
+    @GetMapping(value = "/priorite_baisse/{bookId}")
+    public void updatePriorityReservations(@PathVariable int bookId) {
+        List<Reservation> listReservationsBook = reservationDao.findAllByBookId(bookId);
+        for(Reservation reservationBook : listReservationsBook) {
+            reservationBook.setPriority(reservationBook.getPriority() - 1);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(Calendar.getInstance().getTime());
+            calendar.add(Calendar.DAY_OF_YEAR, 2);
+            calendar.add(Calendar.HOUR_OF_DAY, 1);
+            reservationBook.setDeadline(calendar.getTime());
+            reservationDao.save(reservationBook);
+        }
     }
 }
