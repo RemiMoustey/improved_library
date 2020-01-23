@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface ReservationDao extends JpaRepository<Reservation, Integer> {
     List<Reservation> findAllByBookId(int bookId);
+    List<Reservation> findAllByUserId(int userId);
+    void deleteById(int id);
 }

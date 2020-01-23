@@ -309,6 +309,7 @@ public class ClientController {
                 transport.connect(properties.getProperty("mail.smtp.host"), properties.getProperty("mail.smtp.user"), properties.getProperty("mail.smtp.password"));
                 transport.sendMessage(message, message.getAllRecipients());
                 transport.close();
+                break;
             }
         }
         response.sendRedirect("/livres");

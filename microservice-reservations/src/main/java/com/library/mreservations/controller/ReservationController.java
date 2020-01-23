@@ -47,17 +47,52 @@ public class ReservationController {
         return reservationDao.findAllByBookId(bookId);
     }
 
+    @GetMapping(value = "/reservations_user/{userId}")
+    public List<Reservation> getReservationsOfUser(@PathVariable int userId) {
+        return reservationDao.findAllByUserId(userId);
+    }
+
     @GetMapping(value = "/priorite_baisse/{bookId}")
     public void updatePriorityReservations(@PathVariable int bookId) {
         List<Reservation> listReservationsBook = reservationDao.findAllByBookId(bookId);
         for(Reservation reservationBook : listReservationsBook) {
             reservationBook.setPriority(reservationBook.getPriority() - 1);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(Calendar.getInstance().getTime());
-            calendar.add(Calendar.DAY_OF_YEAR, 2);
-            calendar.add(Calendar.HOUR_OF_DAY, 1);
-            reservationBook.setDeadline(calendar.getTime());
+            if(reservationBook.getPriority() == 0) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(Calendar.getInstance().getTime());
+//                calendar.add(Calendar.DAY_OF_YEAR, 2);
+//                calendar.add(Calendar.HOUR_OF_DAY, 1);
+                calendar.add(Calendar.MINUTE, 1);
+                reservationBook.setDeadline(calendar.getTime());
+            }
             reservationDao.save(reservationBook);
         }
+    }
+
+    @RequestMapping(value="/priorite_baisse_batch/{bookId}", method = RequestMethod.PUT)
+    public void updatePriorityReservationsInBatch(@PathVariable int bookId) {
+        List<Reservation> listReservationsBook = reservationDao.findAllByBookId(bookId);
+        for(Reservation reservationBook : listReservationsBook) {
+            reservationBook.setPriority(reservationBook.getPriority() - 1);
+            if(reservationBook.getPriority() == 0) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(Calendar.getInstance().getTime());
+//                calendar.add(Calendar.DAY_OF_YEAR, 2);
+//                calendar.add(Calendar.HOUR_OF_DAY, 1);
+                calendar.add(Calendar.MINUTE, 1);
+                reservationBook.setDeadline(calendar.getTime());
+            }
+            reservationDao.save(reservationBook);
+        }
+    }
+
+    @GetMapping(value = "/suppression_reservation/{reservationId}")
+    public void deleteReservation(@PathVariable int reservationId) {
+        reservationDao.deleteById(reservationId);
+    }
+
+    @RequestMapping(value="/suppression_reservation_batch/{reservationId}", method = RequestMethod.DELETE)
+    public void deleteReservationInBatch(@PathVariable int reservationId) {
+        reservationDao.deleteById(reservationId);
     }
 }
