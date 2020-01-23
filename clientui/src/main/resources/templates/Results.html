@@ -28,6 +28,11 @@
                                 <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></a>
                             </p>
                         </div>
+                        <div th:if="${book.copies == 0}">
+                            <p>Livre indisponible.<br />
+                                Retour prévu au plus tard le .
+                            </p>
+                        </div>
                     </div>
                 </div>
                 <h3>Ouvrage(s) dont le nom de l'auteur correspond à la recherche :</h3>

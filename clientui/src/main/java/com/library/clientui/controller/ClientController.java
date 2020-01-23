@@ -129,6 +129,7 @@ public class ClientController {
         model.addAttribute("books", request.getSession().getAttribute("books"));
         request.getSession().removeAttribute("books");
         model.addAttribute("search", search);
+
         return "Results";
     }
 
