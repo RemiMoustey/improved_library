@@ -127,9 +127,18 @@ public class ClientController {
             return "DeclinedAccess";
         }
         model.addAttribute("books", request.getSession().getAttribute("books"));
+        Map<Integer, Date> firstReturnDatesBook = new HashMap<>();
+        for(BookBean book : (List<BookBean>) request.getSession().getAttribute("books")) {
+            List<LoanBean> listLoans = Arrays.asList(new RestTemplate().getForEntity("http://localhost:9003/tous_les_prets/" + book.getId(), LoanBean[].class).getBody());
+            for(LoanBean loan : listLoans) {
+                List<Date> dates = new ArrayList<>();
+                dates.add(loan.getDeadline());
+                firstReturnDatesBook.put(book.getId(), Collections.min(dates));
+            }
+        }
+        model.addAttribute("firstReturnDatesBook", firstReturnDatesBook);
         request.getSession().removeAttribute("books");
         model.addAttribute("search", search);
-
         return "Results";
     }
 
@@ -175,11 +184,11 @@ public class ClientController {
                 break;
             }
         }
-        if(!isReserved) {
+        if(isReserved) {
+            response.sendRedirect("/priorite_baisse/" + bookId);
+        } else {
             BooksProxy.updateStockBookIncrement(bookId);
             response.sendRedirect("/livres");
-        } else {
-            response.sendRedirect("/priorite_baisse/" + bookId);
         }
     }
 

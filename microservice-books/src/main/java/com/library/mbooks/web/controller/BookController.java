@@ -54,6 +54,11 @@ public class BookController {
         bookDao.save(book);
     }
 
+    @RequestMapping(value="/stock_monte_batch/{bookId}", method = RequestMethod.PUT)
+    public void updateBookBatch(@PathVariable int bookId, @RequestBody Book book) {
+        bookDao.save(book);
+    }
+
     @GetMapping(value = "/stock_monte/{bookId}")
     public void updateStockBookIncrement(@PathVariable int bookId) {
         Book book = bookDao.findById(bookId);

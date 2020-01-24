@@ -65,12 +65,12 @@ public class LoanController {
         return ResponseEntity.created(location).build();
     }
 
-    @GetMapping(value = "tous_les_prets")
+    @GetMapping(value = "/tous_les_prets")
     public List<Loan> getAllLoans() {
         return loanDao.findAll();
     }
 
-    @GetMapping(value = "tous_les_prets/{bookId}")
+    @GetMapping(value = "/tous_les_prets/{bookId}")
     public List<Loan> getLoansOfBook(@PathVariable int bookId) {
         return loanDao.findAllByBookId(bookId);
     }

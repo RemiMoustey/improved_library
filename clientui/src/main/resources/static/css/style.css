@@ -75,6 +75,11 @@
     margin: 0;
 }
 
+.no-copies {
+    width: 200px;
+    text-align: center;
+}
+
 @media all and (max-width: 991px) {
     .fixed-top {
         position: static;

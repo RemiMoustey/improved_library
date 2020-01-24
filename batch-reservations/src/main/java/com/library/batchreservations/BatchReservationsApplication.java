@@ -30,61 +30,65 @@ public class BatchReservationsApplication {
 
 	@Scheduled(cron = "0 */1 * * * *")
 	private static void analyseReservations() throws MessagingException {
-		updatePriority();
-		findUserToSendMail();
+        RestTemplate restTemplate = new RestTemplate();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(Calendar.getInstance().getTime());
+        calendar.add(Calendar.HOUR, 1);
+        for(BookBean book : booksList) {
+            List<ReservationBean> reservationsList = Arrays.asList(restTemplate.getForEntity("http://localhost:9004/reservations/" + book.getId(), ReservationBean[].class).getBody());
+            if(reservationsList.size() > 0) {
+                for(ReservationBean reservation : reservationsList) {
+                    if(reservation.getDeadline() != null && reservation.getDeadline().before(calendar.getTime())) {
+                        Map<String, String> paramsDelete = new HashMap<String, String>();
+                        paramsDelete.put("id", Integer.toString(reservation.getId()));
+                        restTemplate.delete("http://localhost:9004/suppression_reservation_batch/{id}", paramsDelete);
+                        List<ReservationBean> reservationsListToUpdate = Arrays.asList(restTemplate.getForEntity("http://localhost:9004/reservations/" + book.getId(), ReservationBean[].class).getBody());
+                        if(reservationsListToUpdate.size() > 0) {
+                            for (ReservationBean reservationToUpdate : reservationsListToUpdate) {
+                                ReservationBean updatedReservation = new ReservationBean();
+                                updatedReservation.setId(reservationToUpdate.getId());
+                                updatedReservation.setBookId(reservationToUpdate.getBookId());
+                                updatedReservation.setUserId(reservationToUpdate.getUserId());
+                                updatedReservation.setPriority(reservationToUpdate.getPriority() - 1);
+                                if (updatedReservation.getPriority() == 0) {
+                                    Calendar calendarReservation = Calendar.getInstance();
+                                    calendarReservation.setTime(Calendar.getInstance().getTime());
+                                    //calendar.add(Calendar.DAY_OF_YEAR, 2);
+                                    calendarReservation.add(Calendar.HOUR, 1);
+                                    updatedReservation.setDeadline(calendarReservation.getTime());
+                                    UserBean user = restTemplate.getForObject("http://localhost:9002/utilisateur_id/" + updatedReservation.getUserId(), UserBean.class);
+                                    readPropertiesAndSend(user.getEmail(), book.getTitle());
+                                }
+                                Map<String, String> paramsPut = new HashMap<String, String>();
+                                paramsPut.put("id", Integer.toString(reservation.getId()));
+                                restTemplate.put("http://localhost:9004/priorite_baisse_batch/{id}", updatedReservation, paramsPut);
+                            }
+                        } else {
+                            viewListReservationsForIncrement(book);
+                        }
+                    }
+                }
+            }
+        }
 	}
 
-	private static void updatePriority() {
-		RestTemplate restTemplate = new RestTemplate();
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(Calendar.getInstance().getTime());
-		for(BookBean book : booksList) {
-			List<ReservationBean> reservationsList = Arrays.asList(restTemplate.getForEntity("http://localhost:9004/reservations/" + book.getId(), ReservationBean[].class).getBody());
-			if(reservationsList != null) {
-				for(ReservationBean reservation : reservationsList) {
-					if(reservation.getDeadline() != null && reservation.getDeadline().before(calendar.getTime())) {
-						Map<String, String> paramsDelete = new HashMap<String, String>();
-						paramsDelete.put("id", Integer.toString(reservation.getId()));
-						restTemplate.delete("http://localhost:9004/suppression_reservation_batch/{id}", paramsDelete);
-						List<ReservationBean> reservationsListToUpdate = Arrays.asList(restTemplate.getForEntity("http://localhost:9004/reservations/" + book.getId(), ReservationBean[].class).getBody());
-						for(ReservationBean reservationToUpdate : reservationsListToUpdate) {
-							ReservationBean updatedReservation = new ReservationBean();
-							updatedReservation.setId(reservationToUpdate.getId());
-							updatedReservation.setBookId(reservationToUpdate.getBookId());
-							updatedReservation.setUserId(reservationToUpdate.getUserId());
-							updatedReservation.setPriority(reservationToUpdate.getPriority() - 1);
-							if(updatedReservation.getPriority() == 0) {
-								Calendar calendarReservation = Calendar.getInstance();
-								calendarReservation.setTime(Calendar.getInstance().getTime());
-								calendarReservation.add(Calendar.MINUTE, 2);
-								updatedReservation.setDeadline(calendarReservation.getTime());
-							}
-							Map<String, String> paramsPut = new HashMap<String, String>();
-							paramsPut.put("id", Integer.toString(reservation.getId()));
-							restTemplate.put("http://localhost:9004/priorite_baisse_batch/{id}", updatedReservation, paramsPut);
-						}
-					}
-				}
-			}
-		}
-	}
+    private static void viewListReservationsForIncrement(BookBean book) {
+        BookBean updatedBook = new BookBean();
+        updatedBook.setId(book.getId());
+        updatedBook.setAuthor(book.getAuthor());
+        updatedBook.setTitle(book.getTitle());
+        updatedBook.setPublicationYear(book.getPublicationYear());
+        updatedBook.setIsbn(book.getIsbn());
+        updatedBook.setNumberOfPages(book.getNumberOfPages());
+        updatedBook.setPublisher(book.getPublisher());
+        updatedBook.setCopies(book.getCopies() + 1);
+        updatedBook.setImage(book.getImage());
+        Map<String, String> paramsPut = new HashMap<String, String>();
+        paramsPut.put("id", Integer.toString(book.getId()));
+        new RestTemplate().put("http://localhost:9001/stock_monte_batch/{id}", updatedBook, paramsPut);
+    }
 
-	private static void findUserToSendMail() throws MessagingException {
-		RestTemplate restTemplate = new RestTemplate();
-		for(BookBean book : booksList) {
-			List<ReservationBean> reservationsList = Arrays.asList(restTemplate.getForEntity("http://localhost:9004/reservations/" + book.getId(), ReservationBean[].class).getBody());
-			if(reservationsList != null) {
-				for (ReservationBean reservation : reservationsList) {
-					if (reservation.getPriority() == 0) {
-						UserBean user = restTemplate.getForObject("http://localhost:9002/utilisateur_id/" + reservation.getUserId(), UserBean.class);
-						readPropertiesAndSend(user.getEmail(), book.getTitle());
-					}
-				}
-			}
-		}
-	}
-
-	private static void readPropertiesAndSend(String mailReader, String titleBook) throws MessagingException {
+    private static void readPropertiesAndSend(String mailReader, String titleBook) throws MessagingException {
 		Properties properties = BatchApplication.load("C:\\Users\\qwdg\\Desktop\\projet10\\improved_library\\batch-reservations\\src\\main\\resources\\com.library.batchreservations\\configuration.properties");
 		Session session = Session.getDefaultInstance(properties);
 		MimeMessage message = new MimeMessage(session);
