@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+
 @FeignClient(contextId = "reservationsClient", name = "zuul-server")
 @RibbonClient(name = "microservice-reservations")
 public interface MicroserviceReservationsProxy {
@@ -17,4 +19,10 @@ public interface MicroserviceReservationsProxy {
 
     @GetMapping(value = "/microservice-reservations/priorite_baisse/{bookId}")
     void updatePriorityReservations(@PathVariable int bookId);
+
+    @GetMapping(value = "/microservice-reservations/reservations_user/{userId}")
+    List<ReservationBean> getReservationsUser(@PathVariable int userId);
+
+    @GetMapping(value = "/microservice-reservations/annuler_reservation/{bookId}/{id}")
+    void deleteReservation(@PathVariable int bookId, @PathVariable int id);
 }

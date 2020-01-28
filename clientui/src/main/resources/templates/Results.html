@@ -20,55 +20,54 @@
                 </div>
             </form>
             <h1 class="text-center">Résultats de la recherche "<span th:text="${search}"></span>"</h1>
-                <h3>Ouvrage(s) dont le titre correspond à la recherche :</h3>
-                <div class="row">
-                    <div th:each="book : ${books}">
-                        <div th:if="${#strings.contains(book.title.toLowerCase(), search.toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
-                            <p class="text-center"><a th:href="@{|/livres/${book.id}|}">
-                                <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></a>
-                            </p>
-                            <div th:if="${book.copies == 0}">
-                                <p class="red">Ce livre n'est actuellement pas disponible. Il sera de retour le <span th:text="${#dates.format(firstReturnDatesBook.get(book.id), 'dd/MM/yyyy')}"></span></p>
-                            </div>
+            <h3>Ouvrage(s) dont le titre correspond à la recherche :</h3>
+            <div class="row">
+                <div th:each="book : ${books}">
+                    <div th:if="${#strings.contains(book.title.toLowerCase(), search.toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
+                        <p class="text-center"><a th:href="@{|/livres/${book.id}|}">
+                            <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></a>
+                        </p>
+                        <div th:if="${book.copies == 0}">
+                            <p class="red no-copies">Livre indisponible. Réservé par <span th:text="${numberUsersWhoReserved.get(book.id)}"></span> personnes. Retour prévu au plus tard le <span th:text="${#dates.format(firstReturnDatesBook.get(book.id), 'dd/MM/yyyy')}"></span>.</p>
                         </div>
                     </div>
                 </div>
-                <h3>Ouvrage(s) dont le nom de l'auteur correspond à la recherche :</h3>
-                <div class="row">
-                    <div th:each="book : ${books}">
-                        <div th:if="${#strings.contains(book.author.toLowerCase(), search.toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
-                            <p class="text-center"><a th:href="@{|/details-book/${book.id}|}">
-                                <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></a>
-                            </p>
-                            <div th:if="${book.copies == 0}">
-                                <p class="red">Ce livre n'est actuellement pas disponible. Il sera de retour le <span th:text="${#dates.format(firstReturnDatesBook.get(book.id), 'dd/MM/yyyy')}"></span></p>
-                            </div>
+            </div>
+            <h3>Ouvrage(s) dont le nom de l'auteur correspond à la recherche :</h3>
+            <div class="row">
+                <div th:each="book : ${books}">
+                    <div th:if="${#strings.contains(book.author.toLowerCase(), search.toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
+                        <p class="text-center"><a th:href="@{|/details-book/${book.id}|}">
+                            <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></a>
+                        </p>
+                        <div th:if="${book.copies == 0}">
+                            <p class="red no-copies">Livre indisponible. Réservé par <span th:text="${numberUsersWhoReserved.get(book.id)}"></span> personnes. Retour prévu au plus tard le <span th:text="${#dates.format(firstReturnDatesBook.get(book.id), 'dd/MM/yyyy')}"></span>.</p>
                         </div>
                     </div>
                 </div>
-                <h3>Ouvrage(s) dont l'éditeur correspond à la recherche :</h3>
-                <div class="row">
-                    <div th:each="book : ${books}">
-                        <div th:if="${#strings.contains(book.publisher.toLowerCase(), search.toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
-                            <p class="text-center"><a th:href="@{|/details-book/${book.id}|}">
-                                <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></a>
-                            </p>
-                            <div th:if="${book.copies == 0}">
-                                <p class="red">Ce livre n'est actuellement pas disponible. Il sera de retour le <span th:text="${#dates.format(firstReturnDatesBook.get(book.id), 'dd/MM/yyyy')}"></span></p>
-                            </div>
+            </div>
+            <h3>Ouvrage(s) dont l'éditeur correspond à la recherche :</h3>
+            <div class="row">
+                <div th:each="book : ${books}">
+                    <div th:if="${#strings.contains(book.publisher.toLowerCase(), search.toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
+                        <p class="text-center"><a th:href="@{|/details-book/${book.id}|}">
+                            <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></a>
+                        </p>
+                        <div th:if="${book.copies == 0}">
+                            <p class="red no-copies">Livre indisponible. Réservé par <span th:text="${numberUsersWhoReserved.get(book.id)}"></span> personnes. Retour prévu au plus tard le <span th:text="${#dates.format(firstReturnDatesBook.get(book.id), 'dd/MM/yyyy')}"></span>.</p>
                         </div>
                     </div>
                 </div>
-                <h3>Ouvrage(s) dont l'ISBN correspond à la recherche :</h3>
-                <div class="row">
-                    <div th:each="book : ${books}">
-                        <div th:if="${#strings.contains(book.isbn.toLowerCase(), search.toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
-                            <p class="text-center"><a th:href="@{|/details-book/${book.id}|}">
-                                <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></a>
-                            </p>
-                            <div th:if="${book.copies == 0}">
-                                <p class="red no-copies">Livre indisponible. Retour prévu au plus tard le <span th:text="${#dates.format(firstReturnDatesBook.get(book.id), 'dd/MM/yyyy')}"></span>.</p>
-                            </div>
+            </div>
+            <h3>Ouvrage(s) dont l'ISBN correspond à la recherche :</h3>
+            <div class="row">
+                <div th:each="book : ${books}">
+                    <div th:if="${#strings.contains(book.isbn.toLowerCase(), search.toLowerCase())}" class="col-xl-3 col-lg-4 col-sm-6 my-1">
+                        <p class="text-center"><a th:href="@{|/details-book/${book.id}|}">
+                            <img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></a>
+                        </p>
+                        <div th:if="${book.copies == 0}">
+                            <p class="red no-copies">Livre indisponible. Réservé par <span th:text="${numberUsersWhoReserved.get(book.id)}"></span> personnes. Retour prévu au plus tard le <span th:text="${#dates.format(firstReturnDatesBook.get(book.id), 'dd/MM/yyyy')}"></span>.</p>
                         </div>
                     </div>
                 </div>

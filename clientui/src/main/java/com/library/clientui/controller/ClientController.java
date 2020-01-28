@@ -128,15 +128,19 @@ public class ClientController {
         }
         model.addAttribute("books", request.getSession().getAttribute("books"));
         Map<Integer, Date> firstReturnDatesBook = new HashMap<>();
+        Map<Integer, Integer> numberUsersWhoReserved = new HashMap<>();
         for(BookBean book : (List<BookBean>) request.getSession().getAttribute("books")) {
             List<LoanBean> listLoans = Arrays.asList(new RestTemplate().getForEntity("http://localhost:9003/tous_les_prets/" + book.getId(), LoanBean[].class).getBody());
+            List<Date> dates = new ArrayList<>();
             for(LoanBean loan : listLoans) {
-                List<Date> dates = new ArrayList<>();
                 dates.add(loan.getDeadline());
-                firstReturnDatesBook.put(book.getId(), Collections.min(dates));
             }
+            firstReturnDatesBook.put(book.getId(), Collections.min(dates));
+            List<ReservationBean> listUsersWhoReserved = Arrays.asList(new RestTemplate().getForEntity("http://localhost:9004/reservations/" + book.getId(), ReservationBean[].class).getBody());
+            numberUsersWhoReserved.put(book.getId(), listUsersWhoReserved.size());
         }
         model.addAttribute("firstReturnDatesBook", firstReturnDatesBook);
+        model.addAttribute("numberUsersWhoReserved", numberUsersWhoReserved);
         request.getSession().removeAttribute("books");
         model.addAttribute("search", search);
         return "Results";
@@ -266,7 +270,7 @@ public class ClientController {
         return "Login";
     }
 
-    @GetMapping(value = "acces_refuse")
+    @GetMapping(value = "/acces_refuse")
     public String getDeclinedAccess(Model model) {
         catchLoggedUserId(model);
         return "DeclinedAccess";
@@ -301,27 +305,78 @@ public class ClientController {
             BookBean reservedBook = BooksProxy.getBook(bookId);
             UserBean user = new RestTemplate().getForObject("http://localhost:9002/utilisateur_id/" + reservation.getUserId(), UserBean.class);
             if(reservation.getPriority() == 0) {
-                InputStream inputStream = getClass().getClassLoader().getResourceAsStream("configuration.properties");
-                Properties properties = new Properties();
-                if(inputStream != null) {
-                    properties.load(inputStream);
-                } else {
-                    throw new FileNotFoundException("Le fichier de propriétés n'existe pas");
-                }
-                Session session = Session.getDefaultInstance(properties);
-                MimeMessage message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(properties.getProperty("mail.smtp.user")));
-                message.setSubject(reservedBook.getTitle() + " vous attend à la bibliothèque");
-                message.setContent("Bonjour,\n\nSuite à votre réservation du livre " + reservedBook.getTitle() + ", nous vous informons que ce dernier est disponible à la bibliothèque dans un délai de 48 heures à compter de l'envoi de ce message. Passé ce délai, votre réservation sera expirée.", "text/plain");
-                message.setRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail()));
-
-                Transport transport = session.getTransport("smtp");
-                transport.connect(properties.getProperty("mail.smtp.host"), properties.getProperty("mail.smtp.user"), properties.getProperty("mail.smtp.password"));
-                transport.sendMessage(message, message.getAllRecipients());
-                transport.close();
+                readPropertiesAndSend(user.getEmail(), reservedBook.getTitle());
                 break;
             }
         }
         response.sendRedirect("/livres");
+    }
+
+    @GetMapping(value = "/reservations_user/{userId}")
+    public String getReservations(@PathVariable int userId, Model model) {
+        List<ReservationBean> listReservationsUser = ReservationsProxy.getReservationsUser(userId);
+        List<BookBean> listReservedBooks = new ArrayList<>();
+        for(ReservationBean reservationUser : listReservationsUser) {
+            listReservedBooks.add(new RestTemplate().getForObject("http://localhost:9001/livres/" + reservationUser.getBookId(), BookBean.class));
+        }
+        Map<Integer, Date> returnDatesBook = new HashMap<>();
+        Map<Integer, Integer> placeInQueue = new HashMap<>();
+        for(BookBean book : listReservedBooks) {
+            List<LoanBean> listLoans = Arrays.asList(new RestTemplate().getForEntity("http://localhost:9003/tous_les_prets/" + book.getId(), LoanBean[].class).getBody());
+            List<Date> dates = new ArrayList<>();
+            for(LoanBean loan : listLoans) {
+                dates.add(loan.getDeadline());
+            }
+            if(dates.size() != 0) {
+                returnDatesBook.put(book.getId(), Collections.min(dates));
+            }
+        }
+        model.addAttribute("reservations", listReservationsUser);
+        model.addAttribute("reservedBooks", listReservedBooks);
+        model.addAttribute("returnDatesBook", returnDatesBook);
+        model.addAttribute("placeInQueue", placeInQueue);
+        return "Reservations";
+    }
+
+    @GetMapping(value = "/annuler_reservation/{bookId}/{id}")
+    public void deleteReservation(@PathVariable int id, @PathVariable int bookId, HttpServletResponse response) throws IOException, MessagingException {
+        RestTemplate restTemplate = new RestTemplate();
+        int priorityDeletedReservation = restTemplate.getForObject("http://localhost:9004/reservation/" + id, ReservationBean.class).getPriority();
+        ReservationsProxy.deleteReservation(bookId, id);
+        List<ReservationBean> reservationsOfBook = Arrays.asList(restTemplate.getForEntity("http://localhost:9004/reservations/" + bookId, ReservationBean[].class).getBody());
+        for(ReservationBean reservationOfBook : reservationsOfBook) {
+            if(reservationOfBook.getPriority() > priorityDeletedReservation) {
+                ReservationBean updatedReservation = new ReservationBean();
+                updatedReservation.setId(reservationOfBook.getId());
+                updatedReservation.setBookId(reservationOfBook.getBookId());
+                updatedReservation.setUserId(reservationOfBook.getUserId());
+                updatedReservation.setPriority(reservationOfBook.getPriority() - 1);
+                Map<String, String> paramsPut = new HashMap<>();
+                paramsPut.put("id", Integer.toString(reservationOfBook.getId()));
+                restTemplate.put("http://localhost:9004/priorite_baisse_request/{id}", updatedReservation, paramsPut);
+            }
+        }
+        response.sendRedirect("/livres?annuler_reservation=true");
+    }
+
+    private void readPropertiesAndSend(String email, String title) throws IOException, MessagingException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("configuration.properties");
+        Properties properties = new Properties();
+        if(inputStream != null) {
+            properties.load(inputStream);
+        } else {
+            throw new FileNotFoundException("Le fichier de propriétés n'existe pas");
+        }
+        Session session = Session.getDefaultInstance(properties);
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(properties.getProperty("mail.smtp.user")));
+        message.setSubject(title + " vous attend à la bibliothèque");
+        message.setContent("Bonjour,\n\nSuite à votre réservation du livre " + title + ", nous vous informons que ce dernier est disponible à la bibliothèque dans un délai de 48 heures à compter de l'envoi de ce message. Passé ce délai, votre réservation sera expirée.", "text/plain");
+        message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
+
+        Transport transport = session.getTransport("smtp");
+        transport.connect(properties.getProperty("mail.smtp.host"), properties.getProperty("mail.smtp.user"), properties.getProperty("mail.smtp.password"));
+        transport.sendMessage(message, message.getAllRecipients());
+        transport.close();
     }
 }

@@ -25,6 +25,11 @@ public class ReservationController {
         return reservationDao.findAll();
     }
 
+    @GetMapping(value = "/reservation/{id}")
+    public Reservation getReservationById(@PathVariable int id) {
+        return reservationDao.findById(id);
+    }
+
     @PostMapping(value = "/reserve_book")
     public ResponseEntity<Void> insertReservation(@RequestBody Reservation reservation) {
         Reservation addedReservation = reservationDao.save(reservation);
@@ -60,9 +65,9 @@ public class ReservationController {
             if(reservationBook.getPriority() == 0) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(Calendar.getInstance().getTime());
-//                calendar.add(Calendar.DAY_OF_YEAR, 2);
-                calendar.add(Calendar.HOUR_OF_DAY, 1);
+                //calendar.add(Calendar.DAY_OF_YEAR, 2);
                 calendar.add(Calendar.MINUTE, 1);
+                calendar.add(Calendar.HOUR_OF_DAY, 1);
                 reservationBook.setDeadline(calendar.getTime());
             }
             reservationDao.save(reservationBook);
@@ -74,9 +79,9 @@ public class ReservationController {
         reservationDao.save(reservation);
     }
 
-    @GetMapping(value = "/suppression_reservation/{reservationId}")
-    public void deleteReservation(@PathVariable int reservationId) {
-        reservationDao.deleteById(reservationId);
+    @GetMapping(value = "/annuler_reservation/{bookId}/{id}")
+    public void deleteReservation(@PathVariable int bookId, @PathVariable int id) {
+        reservationDao.deleteById(id);
     }
 
     @RequestMapping(value="/suppression_reservation_batch/{reservationId}", method = RequestMethod.DELETE)
