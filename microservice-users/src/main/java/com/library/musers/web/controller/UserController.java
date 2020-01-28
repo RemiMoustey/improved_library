@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.ws.rs.Path;
 import java.net.URI;
 import java.util.List;
 
@@ -35,6 +36,11 @@ public class UserController {
                 .toUri();
 
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping(value = "/supprimer_utilisateur/{id}")
+    public void deleteUser(@PathVariable int id) {
+        userDao.deleteById(id);
     }
 
     @GetMapping(value = "/login")
