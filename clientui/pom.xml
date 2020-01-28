@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.library.clientui</groupId>
 	<artifactId>clientui</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>2</version>
 	<name>client-ui</name>
 	<description>Client UI for the application</description>
 
