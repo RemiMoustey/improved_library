@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.library</groupId>
 	<artifactId>batch-reservations</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>2</version>
 	<name>batch-reservations</name>
 	<description>Batch for reservations</description>
 
