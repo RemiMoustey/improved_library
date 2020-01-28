@@ -9,8 +9,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 
 @ExtendWith(SpringExtension.class)
@@ -115,7 +113,6 @@ class MicroserviceReservationsApplicationTests {
 		reservation.setPriority(3);
 		reservation.setUserId(19);
 		reservationController.insertReservation(reservation);
-		int previousPriority = reservationController.getAllReservations().get(0).getPriority();
 		reservation.setPriority(2);
 		reservationController.updateReservationBatch(2, reservation);
 		assertEquals(2, (int) reservationController.getAllReservations().get(0).getPriority());

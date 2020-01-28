@@ -1,5 +1,6 @@
 package com.library.mloans;
 
+import com.library.mloans.exceptions.UnauthorizedProlongationException;
 import com.library.mloans.model.Loan;
 import com.library.mloans.web.controller.LoanController;
 import org.junit.jupiter.api.Test;
@@ -61,7 +62,26 @@ class MicroserviceLoansApplicationTests {
 	}
 
 	@Test
-	void testUpdateExtendedLoan() {
+	void testUpdateExtendedLoanFail() {
+		Loan loan = new Loan();
+		loan.setBookId(2);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(Calendar.getInstance().getTime());
+		loan.setDeadline(calendar.getTime());
+		loan.setUserId(19);
+		loan.setExtended(false);
+		loanController.insertLoan(loan);
+		loan.setDeadline(calendar.getTime());
+		try {
+			loanController.updateExtendedLoan(loan);
+		} catch(UnauthorizedProlongationException e) {
+			assert(e.getMessage().contains("Vous ne pouvez pas prolonger votre prêt car la date limite de retour a été dépassée"));
+		}
+		loanController.deleteLoan(loanController.getLoansOfBook(2).get(0).getId(), 2);
+	}
+
+	@Test
+	void testUpdateExtendedLoanSuccess() {
 		Loan loan = new Loan();
 		loan.setBookId(2);
 		Calendar calendar = Calendar.getInstance();

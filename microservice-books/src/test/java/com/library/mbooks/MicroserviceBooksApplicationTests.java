@@ -29,13 +29,16 @@ class MicroserviceBooksApplicationTests {
 	}
 
 	@Test
-	void testGetBook() {
+	void testGetBookFail() {
 		try {
 			bookController.getBook(17);
 		} catch(BookNotFoundException e) {
 			assert(e.getMessage().contains("Le livre correspondant n'existe pas."));
 		}
+	}
 
+	@Test
+	void testGetBookSuccess() {
 		Book foundBook = bookController.getBook(4);
 		assertEquals("Contes", foundBook.getTitle());
 	}
@@ -46,7 +49,7 @@ class MicroserviceBooksApplicationTests {
 	}
 
 	@Test
-	void testGetListBooksOfLoans() {
+	void testGetListBooksOfLoansFail() {
 		List<Integer> listIds = new ArrayList<>();
 		listIds.add(15);
 		listIds.add(16);
@@ -56,7 +59,11 @@ class MicroserviceBooksApplicationTests {
 		} catch(BookNotFoundException e) {
 			assert(e.getMessage().contains("Aucun livre n'est disponible"));
 		}
-		listIds.clear();
+	}
+
+	@Test
+	void testGetListBooksOfLoansSuccess() {
+		List<Integer> listIds = new ArrayList<>();
 		listIds.add(1);
 		listIds.add(2);
 		listIds.add(3);
@@ -64,24 +71,32 @@ class MicroserviceBooksApplicationTests {
 	}
 
 	@Test
-	void testUpdateStockBookDecrement() {
+	void testUpdateStockBookDecrementFail() {
 		try {
 			bookController.updateStockBookDecrement(22);
 		} catch(BookNotFoundException e) {
 			assert(e.getMessage().contains("Le livre correspondant n'existe pas."));
 		}
+	}
+
+	@Test
+	void testUpdateStockBookDecrementSuccess() {
 		int numberCopiesBeforeUpdate = bookController.getBook(2).getCopies();
 		bookController.updateStockBookDecrement(2);
 		assertEquals(numberCopiesBeforeUpdate - 1, (int) bookController.getBook(2).getCopies());
 	}
 
 	@Test
-	void testUpdateStockBookIncrement(){
+	void testUpdateStockBookIncrementFail(){
 		try {
 			bookController.updateStockBookIncrement(18);
 		} catch(BookNotFoundException e) {
 			assert(e.getMessage().contains("Le livre correspondant n'existe pas."));
 		}
+	}
+
+	@Test
+	void testUpdateStockBookIncrementSuccess() {
 		int numberCopiesBeforeUpdate = bookController.getBook(1).getCopies();
 		bookController.updateStockBookIncrement(1);
 		assertEquals(numberCopiesBeforeUpdate + 1, (int) bookController.getBook(1).getCopies());
