@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Prêts en cours</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    </head>
+
+    <body>
+        <div th:replace="Navbar :: navbar"></div>
+        <div class="container text-center">
+            <h3 class="mb-5">Mes réservations en cours :</h3>
+            <div th:if="${not #lists.isEmpty(reservations)}">
+                <div th:each="reservation : ${reservations}">
+                    <div th:each="book : ${reservedBooks}">
+                        <div th:if="${book.id == reservation.bookId}">
+                            <p><span th:text="${book.author}"></span>, <span class="italic" th:text="${book.title}"></span>, <span th:text="${book.publisher}"></span>, <span th:text="${book.publicationYear}"></span>, <span th:text="${book.numberOfPages}"></span> pages.</p>
+                            <p><img th:src="${book.image}" th:alt="@{|Couverture du livre ${book.title}|}" /></p>
+                            <div th:if="${reservation.priority != 0}">
+                                <p>Retour prévu au plus tard le <span th:text="${#dates.format(returnDatesBook.get(book.id), 'dd/MM/yyyy')}" class="green"></span>.</p>
+                            </div>
+                            <div th:if="${reservation.priority == 1}">
+                                <p>Vous êtes la <span th:text="${reservation.priority}"></span><sup>ère</sup> personne sur la liste d'attente.</p>
+                            </div>
+                            <div th:if="${reservation.priority != 1 && reservation.priority != 0}">
+                                <p>Vous êtes la <span th:text="${reservation.priority}"></span><sup>ème</sup> personne sur la liste d'attente.</p>
+                            </div>
+                            <div th:if="${reservation.priority == 0}">
+                                <p>Vous pouvez récupérer ce livre en bibliothèque. Il vous est réservé !</p>
+                            </div>
+                            <p><a th:href="@{|/annuler_reservation/${reservation.bookId}/${reservation.id}|}">Annuler cette réservation</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(reservations)}">
+                <p>Vous n'avez aucune réservation en cours.</p>
+            </div>
+        </div>
+        <script type="text/javascript" src="http://localhost:8080/webjars/bootstrap/4.0.0-2/js/bootstrap.min.js"></script>
+    </body>
+</html>

@@ -21,6 +21,12 @@ class MicroserviceReservationsApplicationTests {
 	@Autowired
 	private ReservationController reservationController;
 
+	void deleteReservationForTest(int bookId) {
+		while(reservationController.getReservationsOfBook(bookId).size() > 0) {
+			reservationController.deleteReservation(bookId, reservationController.getReservationsOfBook(bookId).get(0).getId());
+		}
+	}
+
 	@Test
 	void testGetAllReservations() {
 		assertEquals(0, reservationController.getAllReservations().size());
@@ -35,7 +41,7 @@ class MicroserviceReservationsApplicationTests {
 		reservation.setUserId(19);
 		reservationController.insertReservation(reservation);
 		assertEquals(previousSize + 1, reservationController.getAllReservations().size());
-		reservationController.deleteReservation(reservationController.getReservationsOfBook(2).get(0).getId());
+		deleteReservationForTest(2);
 	}
 
 	@Test
@@ -46,7 +52,7 @@ class MicroserviceReservationsApplicationTests {
 		reservation.setUserId(19);
 		reservationController.insertReservation(reservation);
 		int previousSize = reservationController.getAllReservations().size();
-		reservationController.deleteReservation(reservationController.getReservationsOfBook(2).get(0).getId());
+		deleteReservationForTest(2);
 		assertEquals(previousSize - 1, reservationController.getAllReservations().size());
 	}
 
@@ -62,10 +68,8 @@ class MicroserviceReservationsApplicationTests {
 		secondReservation.setPriority(0);
 		secondReservation.setUserId(21);
 		reservationController.insertReservation(secondReservation);
-		List<Reservation> list = reservationController.getReservationsOfBook(2);
 		assertEquals(2, reservationController.getReservationsOfBook(2).size());
-		reservationController.deleteReservation(reservationController.getAllReservations().get(0).getId());
-		reservationController.deleteReservation(reservationController.getAllReservations().get(0).getId());
+		deleteReservationForTest(2);
 	}
 
 	@Test
@@ -86,9 +90,9 @@ class MicroserviceReservationsApplicationTests {
 		thirdReservation.setUserId(19);
 		reservationController.insertReservation(thirdReservation);
 		assertEquals(3, reservationController.getReservationsOfUser(19).size());
-		reservationController.deleteReservation(reservationController.getAllReservations().get(0).getId());
-		reservationController.deleteReservation(reservationController.getAllReservations().get(0).getId());
-		reservationController.deleteReservation(reservationController.getAllReservations().get(0).getId());
+		deleteReservationForTest(2);
+		deleteReservationForTest(5);
+		deleteReservationForTest(4);
 	}
 
 	@Test
@@ -101,7 +105,7 @@ class MicroserviceReservationsApplicationTests {
 		reservationController.insertReservation(reservation);
 		reservationController.updatePriorityReservations(2);
 		assertEquals(previousPriority - 1, (int) reservationController.getReservationsOfBook(2).get(0).getPriority());
-		reservationController.deleteReservation(reservationController.getAllReservations().get(0).getId());
+		deleteReservationForTest(2);
 	}
 
 	@Test
@@ -115,7 +119,7 @@ class MicroserviceReservationsApplicationTests {
 		reservation.setPriority(2);
 		reservationController.updateReservationBatch(2, reservation);
 		assertEquals(2, (int) reservationController.getAllReservations().get(0).getPriority());
-		reservationController.deleteReservation(reservationController.getAllReservations().get(0).getId());
+		deleteReservationForTest(2);
 	}
 
 	@Test
@@ -126,7 +130,7 @@ class MicroserviceReservationsApplicationTests {
 		reservation.setUserId(19);
 		reservationController.insertReservation(reservation);
 		int previousSize = reservationController.getAllReservations().size();
-		reservationController.deleteReservation(reservationController.getAllReservations().get(0).getId());
+		reservationController.deleteReservation(2, reservationController.getAllReservations().get(0).getId());
 		assertEquals(previousSize - 1, reservationController.getAllReservations().size());
 	}
 }
