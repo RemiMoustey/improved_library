@@ -245,22 +245,13 @@ public class ClientController {
     }
 
     @PostMapping(value = "/prolongation")
-    public void updateExtendedLoan(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void updateExtendedLoan(HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {
         LoanBean updatedLoan = new LoanBean(Integer.parseInt(request.getParameter("id")));
         updatedLoan.setUserId(Integer.parseInt(request.getParameter("userId")));
         updatedLoan.setBookId(Integer.parseInt(request.getParameter("bookId")));
-        Calendar calendar = Calendar.getInstance();
-        try {
-            Date date = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy",
-                    Locale.ENGLISH).parse(request.getParameter("deadline"));
-            calendar.setTime(date);
-            calendar.add(Calendar.DAY_OF_YEAR, 28);
-            updatedLoan.setDeadline(calendar.getTime());
-            updatedLoan.setExtended(true);
-            LoansProxy.updateExtendedLoan(updatedLoan);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        updatedLoan.setDeadline(new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH).parse(request.getParameter("deadline")));
+        LoansProxy.updateExtendedLoan(updatedLoan);
+
         response.sendRedirect("/livres");
     }
 

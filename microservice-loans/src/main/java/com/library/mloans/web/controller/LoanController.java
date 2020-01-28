@@ -2,6 +2,7 @@ package com.library.mloans.web.controller;
 
 import com.library.mloans.dao.LoanDao;
 import com.library.mloans.exceptions.LoanNotFoundException;
+import com.library.mloans.exceptions.UnauthorizedProlongationException;
 import com.library.mloans.model.Loan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 public class LoanController {
@@ -50,6 +55,16 @@ public class LoanController {
 
     @PostMapping(value = "/prolongation")
     public ResponseEntity<Void> updateExtendedLoan(@RequestBody Loan extendedLoan) {
+        Calendar nowCalendar = Calendar.getInstance();
+        nowCalendar.setTime(Calendar.getInstance().getTime());
+        if(extendedLoan.getDeadline().before(nowCalendar.getTime())) {
+            throw new UnauthorizedProlongationException("Vous ne pouvez pas prolonger votre prêt car la date limite de retour a été dépassée");
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(extendedLoan.getDeadline());
+        calendar.add(Calendar.DAY_OF_YEAR, 28);
+        extendedLoan.setDeadline(calendar.getTime());
+        extendedLoan.setExtended(true);
         Loan updatedLoan = loanDao.save(extendedLoan);
 
         if (updatedLoan == null) {
