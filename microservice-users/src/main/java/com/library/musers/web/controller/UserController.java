@@ -1,7 +1,6 @@
 package com.library.musers.web.controller;
 
-import com.library.musers.dao.*;
-import com.library.musers.exceptions.UserNotFoundException;
+import com.library.musers.dao.UserDao;
 import com.library.musers.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.ws.rs.Path;
 import java.net.URI;
 import java.util.List;
 
@@ -38,6 +38,11 @@ public class UserController {
         return ResponseEntity.created(location).build();
     }
 
+    @GetMapping(value = "/supprimer_utilisateur/{id}")
+    public void deleteUser(@PathVariable int id) {
+        userDao.deleteById(id);
+    }
+
     @GetMapping(value = "/login")
     public String getLoginPage() {
         return "Login";
@@ -51,5 +56,10 @@ public class UserController {
     @GetMapping(value = "/utilisateur/{username}")
     public User getUserByUsername(@PathVariable String username) {
         return userDao.findUserByUsername(username);
+    }
+
+    @GetMapping(value = "/utilisateur_id/{userId}")
+    public User getUserById(@PathVariable int userId) {
+        return userDao.findUserById(userId);
     }
 }

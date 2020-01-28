@@ -47,7 +47,7 @@ public class BatchApplication {
 		}
 	}
 
-	public static Properties load(String filename) throws IOException {
+	public static Properties load(String filename) {
 		Properties properties = new Properties();
 		try(FileInputStream input = new FileInputStream(filename)) {
 			properties.load(input);

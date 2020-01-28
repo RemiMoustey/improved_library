@@ -12,6 +12,10 @@
     color: #F00;
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 .title-library {
     font-family: "BrushScriptStd", serif;
     font-size: 45px;
@@ -69,6 +73,11 @@
 
 .alert-danger p, .alert-success p {
     margin: 0;
+}
+
+.no-copies {
+    width: 200px;
+    text-align: center;
 }
 
 @media all and (max-width: 991px) {

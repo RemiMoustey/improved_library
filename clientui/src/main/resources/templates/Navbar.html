@@ -35,6 +35,11 @@
                     </div>
                     <div sec:authorize="isAuthenticated()">
                         <li class="nav-item">
+                            <a class="nav-link" th:href="@{|/reservations_user/${userId}|}">Mes réservations</a>
+                        </li>
+                    </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <li class="nav-item">
                             <form th:action="@{/logout}" method="post">
                                 <input class="logout-link" type="submit" value="Se déconnecter" />
                             </form>

@@ -10,6 +10,9 @@
     <body>
         <div th:replace="Navbar :: navbar"></div>
         <div class="container">
+            <div th:if="${param.reservation}" class="alert alert-success w-50 m-auto">
+                <p>Votre réservation a bien été envoyée !</p>
+            </div>
             <h2 class="text-center">Les ouvrages disponibles</h2>
             <form method="post" th:action="@{/livres/resultats}" class="form-search">
                 <div class="pb-4 search-radio mx-auto mt-5 text-center">

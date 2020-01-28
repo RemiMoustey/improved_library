@@ -50,13 +50,20 @@ public class BookController {
     @GetMapping(value = "/stock_baisse/{bookId}")
     public void updateStockBookDecrement(@PathVariable int bookId) {
         Book book = bookDao.findById(bookId);
+        if(book == null) throw new BookNotFoundException("Le livre correspondant n'existe pas.");
         book.setCopies(book.getCopies() - 1);
+        bookDao.save(book);
+    }
+
+    @RequestMapping(value="/stock_monte_batch/{bookId}", method = RequestMethod.PUT)
+    public void updateBookBatch(@PathVariable int bookId, @RequestBody Book book) {
         bookDao.save(book);
     }
 
     @GetMapping(value = "/stock_monte/{bookId}")
     public void updateStockBookIncrement(@PathVariable int bookId) {
         Book book = bookDao.findById(bookId);
+        if(book == null) throw new BookNotFoundException("Le livre correspondant n'existe pas.");
         book.setCopies(book.getCopies() + 1);
         bookDao.save(book);
     }
