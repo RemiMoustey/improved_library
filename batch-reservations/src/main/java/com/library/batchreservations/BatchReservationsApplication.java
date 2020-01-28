@@ -28,6 +28,41 @@ public class BatchReservationsApplication {
 
 	static List<BookBean> booksList;
 
+	private static ReservationBean createUpdatedReservation(ReservationBean reservationToUpdate, Calendar calendar) {
+	    ReservationBean updatedReservation = new ReservationBean();
+        updatedReservation.setId(reservationToUpdate.getId());
+        updatedReservation.setBookId(reservationToUpdate.getBookId());
+        updatedReservation.setUserId(reservationToUpdate.getUserId());
+        updatedReservation.setPriority(reservationToUpdate.getPriority() - 1);
+        if (updatedReservation.getPriority() == 0) {
+            Calendar calendarReservation = Calendar.getInstance();
+            calendarReservation.setTime(Calendar.getInstance().getTime());
+            //calendar.add(Calendar.DAY_OF_YEAR, 2);
+            calendar.add(Calendar.MINUTE, 1);
+            calendarReservation.add(Calendar.HOUR, 1);
+            updatedReservation.setDeadline(calendarReservation.getTime());
+        }
+        return updatedReservation;
+    }
+
+    private static void updateReservationList(List<ReservationBean> reservationsListToUpdate, ReservationBean reservation, BookBean book, Calendar calendar) throws MessagingException {
+	    RestTemplate restTemplate = new RestTemplate();
+        if(reservationsListToUpdate.size() > 0) {
+            for (ReservationBean reservationToUpdate : reservationsListToUpdate) {
+                ReservationBean updatedReservation = createUpdatedReservation(reservationToUpdate, calendar);
+                if (updatedReservation.getPriority() == 0) {
+                    UserBean user = restTemplate.getForObject("http://localhost:9002/utilisateur_id/" + updatedReservation.getUserId(), UserBean.class);
+                    readPropertiesAndSend(user.getEmail(), book.getTitle());
+                }
+                Map<String, String> paramsPut = new HashMap<String, String>();
+                paramsPut.put("id", Integer.toString(reservation.getId()));
+                restTemplate.put("http://localhost:9004/priorite_baisse_batch/{id}", updatedReservation, paramsPut);
+            }
+        } else {
+            viewListReservationsForIncrement(book);
+        }
+    }
+
 	@Scheduled(cron = "0 */1 * * * *")
 	private static void analyseReservations() throws MessagingException {
         RestTemplate restTemplate = new RestTemplate();
@@ -43,29 +78,7 @@ public class BatchReservationsApplication {
                         paramsDelete.put("id", Integer.toString(reservation.getId()));
                         restTemplate.delete("http://localhost:9004/suppression_reservation_batch/{id}", paramsDelete);
                         List<ReservationBean> reservationsListToUpdate = Arrays.asList(restTemplate.getForEntity("http://localhost:9004/reservations/" + book.getId(), ReservationBean[].class).getBody());
-                        if(reservationsListToUpdate.size() > 0) {
-                            for (ReservationBean reservationToUpdate : reservationsListToUpdate) {
-                                ReservationBean updatedReservation = new ReservationBean();
-                                updatedReservation.setId(reservationToUpdate.getId());
-                                updatedReservation.setBookId(reservationToUpdate.getBookId());
-                                updatedReservation.setUserId(reservationToUpdate.getUserId());
-                                updatedReservation.setPriority(reservationToUpdate.getPriority() - 1);
-                                if (updatedReservation.getPriority() == 0) {
-                                    Calendar calendarReservation = Calendar.getInstance();
-                                    calendarReservation.setTime(Calendar.getInstance().getTime());
-                                    //calendar.add(Calendar.DAY_OF_YEAR, 2);
-                                    calendarReservation.add(Calendar.HOUR, 1);
-                                    updatedReservation.setDeadline(calendarReservation.getTime());
-                                    UserBean user = restTemplate.getForObject("http://localhost:9002/utilisateur_id/" + updatedReservation.getUserId(), UserBean.class);
-                                    readPropertiesAndSend(user.getEmail(), book.getTitle());
-                                }
-                                Map<String, String> paramsPut = new HashMap<String, String>();
-                                paramsPut.put("id", Integer.toString(reservation.getId()));
-                                restTemplate.put("http://localhost:9004/priorite_baisse_batch/{id}", updatedReservation, paramsPut);
-                            }
-                        } else {
-                            viewListReservationsForIncrement(book);
-                        }
+                        updateReservationList(reservationsListToUpdate, reservation, book, calendar);
                     }
                 }
             }
@@ -89,7 +102,7 @@ public class BatchReservationsApplication {
     }
 
     private static void readPropertiesAndSend(String mailReader, String titleBook) throws MessagingException {
-		Properties properties = BatchApplication.load("C:\\Users\\qwdg\\Desktop\\projet10\\improved_library\\batch-reservations\\src\\main\\resources\\com.library.batchreservations\\configuration.properties");
+		Properties properties = BatchApplication.load("C:\\remi\\projet10\\improved_library\\batch-reservations\\src\\main\\resources\\com.library.batchreservations\\configuration.properties");
 		Session session = Session.getDefaultInstance(properties);
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(properties.getProperty("mail.smtp.user")));
