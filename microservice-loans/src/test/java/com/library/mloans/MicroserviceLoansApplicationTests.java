@@ -37,6 +37,7 @@ class MicroserviceLoansApplicationTests {
 		loan.setExtended(false);
 		loanController.insertLoan(loan);
 		assertEquals(previousSize + 1, loanController.getAllLoans().size());
+		loanController.deleteLoan(loanController.getLoansOfBook(2).get(0).getId(), 2);
 	}
 
 	@Test
