@@ -69,6 +69,28 @@ public class ClientController {
         return "Home";
     }
 
+    public boolean isAlreadyLent(List<LoanBean> loansOfUser, BookBean book) {
+        boolean alreadyLent = false;
+        for(LoanBean loanOfUser : loansOfUser) {
+            if(loanOfUser.getBookId() == book.getId()) {
+                alreadyLent = true;
+                break;
+            }
+        }
+        return alreadyLent;
+    }
+
+    public boolean isAlreadyReserved(List<ReservationBean> listReservationsForTheBook, int userId) {
+        boolean alreadyReserved = false;
+        for(ReservationBean reservation : listReservationsForTheBook) {
+            if(reservation.getUserId() == userId) {
+                alreadyReserved = true;
+                break;
+            }
+        }
+        return alreadyReserved;
+    }
+
     @GetMapping(value = "/livres/{id}")
     public String getCardBook(@PathVariable int id, Model model) {
         BookBean book = BooksProxy.getBook(id);
@@ -76,19 +98,20 @@ public class ClientController {
         catchLoggedUserId(model);
         if(book.getCopies() == 0 && model.getAttribute("userId") != null) {
             model.addAttribute("numberAllCopies", Arrays.asList(new RestTemplate().getForEntity("http://localhost:9003/tous_les_prets/" + book.getId(), LoanBean[].class).getBody()).size());
-            model.addAttribute("numberReservationsForTheBook", Arrays.asList(new RestTemplate().getForEntity("http://localhost:9004/reservations/" + book.getId(), LoanBean[].class).getBody()).size());
+            List<ReservationBean> listReservationsForTheBook = Arrays.asList(new RestTemplate().getForEntity("http://localhost:9004/reservations/" + book.getId(), ReservationBean[].class).getBody());
+            model.addAttribute("numberReservationsForTheBook", listReservationsForTheBook.size());
             List<LoanBean> loansOfUser = Arrays.asList(new RestTemplate().getForEntity("http://localhost:9003/prets/" + model.getAttribute("userId"), LoanBean[].class).getBody());
-            boolean alreadyLent = false;
-            for(LoanBean loanOfUser : loansOfUser) {
-                if(loanOfUser.getBookId() == book.getId()) {
-                    alreadyLent = true;
-                    break;
-                }
-            }
+            boolean alreadyLent = isAlreadyLent(loansOfUser, book);
+            boolean alreadyReserved = isAlreadyReserved(listReservationsForTheBook, (int) model.getAttribute("userId"));
             if(alreadyLent) {
                 model.addAttribute("alreadyLent", true);
             } else {
                 model.addAttribute("alreadyLent", false);
+            }
+            if(alreadyReserved) {
+                model.addAttribute("alreadyReserved", true);
+            } else {
+                model.addAttribute("alreadyReserved", false);
             }
         }
         return "CardBook";

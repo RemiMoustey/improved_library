@@ -57,7 +57,7 @@
                             <span th:if="${book.copies == 0}"><td scope="col" th:text="${book.copies}" class="red"></td></span>
                             <span th:if="${book.copies > 0}"><td scope="col" th:text="${book.copies}" class="green"></td></span>
                             <div th:if="${book.copies == 0 && userId != null}" class="mb-5">
-                                <div th:if="${numberReservationsForTheBook < 2 * numberAllCopies && !alreadyLent}">
+                                <div th:if="${numberReservationsForTheBook < 2 * numberAllCopies && !alreadyLent && !alreadyReserved}">
                                     <p>Il n'y a plus d'exemplaires en stock, mais vous avez la possibilité de réserver ce livre !</p>
                                     <form method="post" th:action="@{|/reserve_book|}">
                                         <input type="hidden" name="bookId" id="bookId" th:value="${book.id}" />
@@ -70,6 +70,9 @@
                                 </div>
                                 <div th:if="${alreadyLent}">
                                     <p>Vous ne pouvez pas réserver ce livre car vous l'avez déjà emprunté.</p>
+                                </div>
+                                <div th:if="${alreadyReserved}">
+                                    <p>Vous ne pouvez pas réserver ce livre car vous l'avez déjà réservé.</p>
                                 </div>
                             </div>
                         </tr>
