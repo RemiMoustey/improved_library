@@ -12,13 +12,13 @@ Ensuite, importez chaque dossier présent à la racine en tant que module à l'a
 
 **1. Connexion à la base de données.**
 
-Créez un fichier nommé _application.properties_ dans les dossiers _microservice-books/src/main/resources_, _microservice-loans/src/main/resources_ et _microservice-users/src/main/resources_.
+Créez un fichier nommé _application.properties_ dans les dossiers _microservice-books/src/main/resources_, _microservice-loans/src/main/resources_, _microservice-reservations/src/main/resources_ et _microservice-users/src/main/resources_.
 
-Créez trois bases de données appelées book-service, loan-service et user-service.
+Créez quatre bases de données appelées book-service, loan-service, reservation-service et user-service.
 
-Ouvrez ces trois fichiers à l'aide d'un éditeur de texte et remplissez-les comme suit :
+Ouvrez ces quatre fichiers à l'aide d'un éditeur de texte et remplissez-les comme suit :
 
-    spring.application.name=microservice-[books ou loans ou users]
+    spring.application.name=microservice-[books ou loans ou reservations users]
     
     #MySQL configuration
     spring.jpa.hibernate.ddl-auto=update
@@ -43,7 +43,7 @@ Après avoir créé une base de données, entrez toutes les requêtes présentes
     
 1. Lancer les fonctions main des classes EurekaServerApplication et ZuulServerApplication respectivement dans les packages eureka-server et zuul-server.
 
-2. Lancer les fonctions main des classes MicroserviceBooksApplication, MicroserviceLoansApplication et MicroserviceUsersApplication respectivement dans les packages microservice-books, microservice-loans et microservice-users.
+2. Lancer les fonctions main des classes MicroserviceBooksApplication, MicroserviceLoansApplication, MicroserviceReservationsApplication et MicroserviceUsersApplication respectivement dans les packages microservice-books, microservice-loans, microservice-reservations et microservice-users.
 
 3. Lancer la fonction main de la classe ClientUiApplication dans le package clientui.
 
@@ -51,4 +51,4 @@ Rendez-vous ensuite sur votre navigateur, puis tapez dans la barre d'adresse : _
 
 Vous devriez arriver sur la page d'accueil qui liste les livres de la bibliothèque !
 
-Il vous est également possible d'exécuter le batch, en lançant la fonction main de la classe BatchApplication.
+Il vous est également possible d'exécuter les deux batches, en lançant la fonction main des classes BatchApplication et BatchReservationsApplication.

@@ -56,6 +56,7 @@ public class ClientController {
         RestTemplate restTemplate = new RestTemplate();
         UserBean loggedUser = restTemplate.getForObject("http://localhost:9002/utilisateur/" + username, UserBean.class);
         if(loggedUser != null) {
+            model.addAttribute("username", username);
             model.addAttribute("userId", loggedUser.getId());
         }
     }
@@ -135,7 +136,9 @@ public class ClientController {
             for(LoanBean loan : listLoans) {
                 dates.add(loan.getDeadline());
             }
-            firstReturnDatesBook.put(book.getId(), Collections.min(dates));
+            if(dates.size() != 0) {
+                firstReturnDatesBook.put(book.getId(), Collections.min(dates));
+            }
             List<ReservationBean> listUsersWhoReserved = Arrays.asList(new RestTemplate().getForEntity("http://localhost:9004/reservations/" + book.getId(), ReservationBean[].class).getBody());
             numberUsersWhoReserved.put(book.getId(), listUsersWhoReserved.size());
         }
@@ -143,6 +146,7 @@ public class ClientController {
         model.addAttribute("numberUsersWhoReserved", numberUsersWhoReserved);
         request.getSession().removeAttribute("books");
         model.addAttribute("search", search);
+        catchLoggedUserId(model);
         return "Results";
     }
 
@@ -326,6 +330,7 @@ public class ClientController {
         model.addAttribute("reservedBooks", listReservedBooks);
         model.addAttribute("returnDatesBook", returnDatesBook);
         model.addAttribute("placeInQueue", placeInQueue);
+        catchLoggedUserId(model);
         return "Reservations";
     }
 
@@ -344,10 +349,15 @@ public class ClientController {
                 updatedReservation.setPriority(reservationOfBook.getPriority() - 1);
                 Map<String, String> paramsPut = new HashMap<>();
                 paramsPut.put("id", Integer.toString(reservationOfBook.getId()));
-                restTemplate.put("http://localhost:9004/priorite_baisse_request/{id}", updatedReservation, paramsPut);
+                restTemplate.put("http://localhost:9004/priorite_baisseest/{id}", updatedReservation, paramsPut);
             }
         }
         response.sendRedirect("/livres?annuler_reservation=true");
+    }
+
+    @GetMapping(value = "/error")
+    public String getErrorPage() {
+        return "Error";
     }
 
     private void readPropertiesAndSend(String email, String title) throws IOException, MessagingException {

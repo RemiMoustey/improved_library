@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" lang="fr">
     <div th:fragment="navbar">
         <nav class="navbar navbar-expand-lg bg-light navbar-light fixed-top">
             <ul class="navbar-nav d-flex align-items-center flex-column m-auto">
@@ -47,6 +47,9 @@
                     </div>
                 </div>
             </ul>
+            <div sec:authorize="isAuthenticated()">
+                <p>Bonjour <span th:text="${username}"></span></p>
+            </div>
         </nav>
     </div>
 </html>
