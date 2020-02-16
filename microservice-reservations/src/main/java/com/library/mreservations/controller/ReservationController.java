@@ -65,8 +65,7 @@ public class ReservationController {
             if(reservationBook.getPriority() == 0) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(Calendar.getInstance().getTime());
-                //calendar.add(Calendar.DAY_OF_YEAR, 2);
-                calendar.add(Calendar.MINUTE, 1);
+                calendar.add(Calendar.DAY_OF_YEAR, 2);
                 calendar.add(Calendar.HOUR_OF_DAY, 1);
                 reservationBook.setDeadline(calendar.getTime());
             }

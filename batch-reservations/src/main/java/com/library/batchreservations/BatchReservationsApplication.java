@@ -1,7 +1,7 @@
 package com.library.batchreservations;
 
-import com.library.batch.BatchApplication;
 import com.library.batchreservations.beans.BookBean;
+import com.library.batchreservations.beans.LoanBean;
 import com.library.batchreservations.beans.ReservationBean;
 import com.library.batchreservations.beans.UserBean;
 import org.springframework.boot.SpringApplication;
@@ -19,6 +19,8 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
 
 @SpringBootApplication(exclude={DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
@@ -28,7 +30,7 @@ public class BatchReservationsApplication {
 
 	static List<BookBean> booksList;
 
-	private static ReservationBean createUpdatedReservation(ReservationBean reservationToUpdate, Calendar calendar) {
+	private static ReservationBean createUpdatedReservation(ReservationBean reservationToUpdate) {
 	    ReservationBean updatedReservation = new ReservationBean();
         updatedReservation.setId(reservationToUpdate.getId());
         updatedReservation.setBookId(reservationToUpdate.getBookId());
@@ -37,19 +39,18 @@ public class BatchReservationsApplication {
         if (updatedReservation.getPriority() == 0) {
             Calendar calendarReservation = Calendar.getInstance();
             calendarReservation.setTime(Calendar.getInstance().getTime());
-            //calendar.add(Calendar.DAY_OF_YEAR, 2);
-            calendar.add(Calendar.MINUTE, 1);
+            calendarReservation.add(Calendar.DAY_OF_YEAR, 2);
             calendarReservation.add(Calendar.HOUR, 1);
             updatedReservation.setDeadline(calendarReservation.getTime());
         }
         return updatedReservation;
     }
 
-    private static void updateReservationList(List<ReservationBean> reservationsListToUpdate, ReservationBean reservation, BookBean book, Calendar calendar) throws MessagingException {
+    private static void updateReservationList(List<ReservationBean> reservationsListToUpdate, ReservationBean reservation, BookBean book) throws MessagingException {
 	    RestTemplate restTemplate = new RestTemplate();
         if(reservationsListToUpdate.size() > 0) {
             for (ReservationBean reservationToUpdate : reservationsListToUpdate) {
-                ReservationBean updatedReservation = createUpdatedReservation(reservationToUpdate, calendar);
+                ReservationBean updatedReservation = createUpdatedReservation(reservationToUpdate);
                 if (updatedReservation.getPriority() == 0) {
                     UserBean user = restTemplate.getForObject("http://localhost:9002/utilisateur_id/" + updatedReservation.getUserId(), UserBean.class);
                     readPropertiesAndSend(user.getEmail(), book.getTitle());
@@ -63,6 +64,15 @@ public class BatchReservationsApplication {
         }
     }
 
+    public static boolean isLent(List<LoanBean> loansList, ReservationBean reservation) {
+        for(LoanBean loan : loansList) {
+            if(loan.getUserId() == reservation.getUserId() && loan.getBookId() == reservation.getBookId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 	@Scheduled(cron = "0 */1 * * * *")
 	private static void analyseReservations() throws MessagingException {
         RestTemplate restTemplate = new RestTemplate();
@@ -73,12 +83,15 @@ public class BatchReservationsApplication {
             List<ReservationBean> reservationsList = Arrays.asList(restTemplate.getForEntity("http://localhost:9004/reservations/" + book.getId(), ReservationBean[].class).getBody());
             if(reservationsList.size() > 0) {
                 for(ReservationBean reservation : reservationsList) {
-                    if(reservation.getDeadline() != null && reservation.getDeadline().before(calendar.getTime())) {
+                    List<LoanBean> loansList = Arrays.asList(restTemplate.getForEntity("http://localhost:9003/prets/" + reservation.getUserId(), LoanBean[].class).getBody());
+                    if(reservation.getDeadline() != null && reservation.getDeadline().before(calendar.getTime()) || isLent(loansList, reservation)) {
                         Map<String, String> paramsDelete = new HashMap<String, String>();
                         paramsDelete.put("id", Integer.toString(reservation.getId()));
                         restTemplate.delete("http://localhost:9004/suppression_reservation_batch/{id}", paramsDelete);
-                        List<ReservationBean> reservationsListToUpdate = Arrays.asList(restTemplate.getForEntity("http://localhost:9004/reservations/" + book.getId(), ReservationBean[].class).getBody());
-                        updateReservationList(reservationsListToUpdate, reservation, book, calendar);
+                        if (!isLent(loansList, reservation)) {
+                            List<ReservationBean> reservationsListToUpdate = Arrays.asList(restTemplate.getForEntity("http://localhost:9004/reservations/" + book.getId(), ReservationBean[].class).getBody());
+                            updateReservationList(reservationsListToUpdate, reservation, book);
+                        }
                     }
                 }
             }
@@ -101,8 +114,18 @@ public class BatchReservationsApplication {
         new RestTemplate().put("http://localhost:9001/stock_monte_batch/{id}", updatedBook, paramsPut);
     }
 
+    public static Properties load(String filename) {
+        Properties properties = new Properties();
+        try(FileInputStream input = new FileInputStream(filename)) {
+            properties.load(input);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return properties;
+    }
+
     private static void readPropertiesAndSend(String mailReader, String titleBook) throws MessagingException {
-		Properties properties = BatchApplication.load("C:\\remi\\projet10\\improved_library\\batch-reservations\\src\\main\\resources\\com.library.batchreservations\\configuration.properties");
+		Properties properties = BatchReservationsApplication.load("C:\\p10\\improved_library\\batch-reservations\\src\\main\\resources\\com.library.batchreservations\\configuration.properties");
 		Session session = Session.getDefaultInstance(properties);
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(properties.getProperty("mail.smtp.user")));

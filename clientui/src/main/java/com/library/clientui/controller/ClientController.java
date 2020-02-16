@@ -300,14 +300,19 @@ public class ClientController {
         newReservation.setBookId(Integer.parseInt(request.getParameter("bookId")));
         newReservation.setUserId(Integer.parseInt(request.getParameter("userId")));
         RestTemplate restTemplate = new RestTemplate();
-        List<ReservationBean> listReservations = Arrays.asList(restTemplate.getForEntity("http://localhost:9004/reservations", ReservationBean[].class).getBody());
-        int priority = 1;
-        if (listReservations != null) {
-            for (ReservationBean reservation : listReservations) {
-                if (reservation.getBookId() == newReservation.getBookId()) {
-                    priority++;
-                }
+        List<ReservationBean> listReservations = Arrays.asList(restTemplate.getForEntity("http://localhost:9004/reservations/" + Integer.parseInt(request.getParameter("bookId")), ReservationBean[].class).getBody());
+        boolean hasZeroPriority = false;
+        for (ReservationBean reservation : listReservations) {
+            if (reservation.getPriority() == 0) {
+                hasZeroPriority = true;
+                break;
             }
+        }
+        int priority = 1;
+        if (hasZeroPriority) {
+            priority += listReservations.size() - 1;
+        } else {
+            priority += listReservations.size();
         }
         newReservation.setPriority(priority);
         ReservationsProxy.insertReservation(newReservation);
@@ -372,7 +377,7 @@ public class ClientController {
                 updatedReservation.setPriority(reservationOfBook.getPriority() - 1);
                 Map<String, String> paramsPut = new HashMap<>();
                 paramsPut.put("id", Integer.toString(reservationOfBook.getId()));
-                restTemplate.put("http://localhost:9004/priorite_baisseest/{id}", updatedReservation, paramsPut);
+                restTemplate.put("http://localhost:9004/priorite_baisse_batch/{id}", updatedReservation, paramsPut);
             }
         }
         response.sendRedirect("/livres?annuler_reservation=true");

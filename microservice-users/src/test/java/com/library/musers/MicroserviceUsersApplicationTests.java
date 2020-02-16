@@ -55,7 +55,7 @@ class MicroserviceUsersApplicationTests {
 
 	@Test
 	void testGetAllUsers() {
-		assertEquals(6, userController.getAllUsers().size());
+		assertEquals(7, userController.getAllUsers().size());
 	}
 
 	@Test
